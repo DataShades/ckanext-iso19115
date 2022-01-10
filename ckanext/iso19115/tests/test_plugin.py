@@ -50,8 +50,6 @@ To temporary patch the CKAN configuration for the duration of a test you can use
 import pytest
 from ckan.plugins import plugin_loaded
 import ckanext.iso19115.plugin as plugin
-import xmlschema
-
 
 @pytest.mark.ckan_config("ckan.plugins", "iso19115")
 @pytest.mark.usefixtures("with_plugins")
@@ -59,9 +57,13 @@ def test_plugin():
     assert plugin_loaded("iso19115")
 
 
-def test_validate_namespaces(examples):
-    schema = xmlschema.XMLSchema("https://schemas.isotc211.org/19115/-3/mdt/2.0/mdt.xsd")
-    schema.validate(examples / "cit_valid.xml")
-    # schema =xmlschema.validate(examples / "cit_valid.xml")
-    breakpoint()
-    pass
+
+def test_validate_namespaces(mdb_schema, examples):
+    assert mdb_schema.is_valid(examples / "mdb.xml")
+
+
+def test_validate_namespaces2(mdb_schema, examples):
+    assert mdb_schema.is_valid(examples / "mdb.xml")
+
+def test_validate_namespaces3(mdb_schema, examples):
+    assert mdb_schema.is_valid(examples / "mdb.xml")
