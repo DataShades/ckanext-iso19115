@@ -1,0 +1,14 @@
+# iso19115-js:
+#   filter: rjsmin
+#   output: ckanext-iso19115/%(version)s-iso19115.js
+#   contents:
+#     - js/iso19115.js
+#   extra:
+#     preload:
+#       - base/main
+
+# iso19115-css:
+#   filter: cssrewrite
+#   output: ckanext-iso19115/%(version)s-iso19115.css
+#   contents:
+#     - css/iso19115.css
