@@ -59,6 +59,7 @@ def test_plugin():
 
 
 def test_validate_namespaces(mdb_schema, examples):
+    # breakpoint()
     assert mdb_schema.is_valid(examples / "mdb.xml")
 
 
