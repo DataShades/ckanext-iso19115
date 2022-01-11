@@ -49,22 +49,24 @@ To temporary patch the CKAN configuration for the duration of a test you can use
 """
 import pytest
 from ckan.plugins import plugin_loaded
+from lxml.etree import XML, dump
 import ckanext.iso19115.plugin as plugin
 
-@pytest.mark.ckan_config("ckan.plugins", "iso19115")
-@pytest.mark.usefixtures("with_plugins")
-def test_plugin():
-    assert plugin_loaded("iso19115")
+# @pytest.mark.ckan_config("ckan.plugins", "iso19115")
+# @pytest.mark.usefixtures("with_plugins")
+# def test_plugin():
+#     assert plugin_loaded("iso19115")
 
 
-
-def test_validate_namespaces(mdb_schema, examples):
-    # breakpoint()
-    assert mdb_schema.is_valid(examples / "mdb.xml")
-
-
-def test_validate_namespaces2(mdb_schema, examples):
-    assert mdb_schema.is_valid(examples / "mdb.xml")
-
-def test_validate_namespaces3(mdb_schema, examples):
-    assert mdb_schema.is_valid(examples / "mdb.xml")
+def test_valid_mds(mds_schema, examples, mdb_schematron):
+    path = examples / "basic2.xml"
+    mds_schema.validate(path)
+    mds_schema.validate(path)
+    if not mdb_schematron.validate(XML(path.open("rb").read())):
+        report = mdb_schematron.validation_report
+        failed = report.xpath("//*[local-name() = 'failed-assert']")
+        errors = '\n'.join(
+            "".join(f.itertext())
+            for f in failed
+        )
+        assert False, errors
