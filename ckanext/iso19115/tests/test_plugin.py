@@ -47,26 +47,13 @@ To temporary patch the CKAN configuration for the duration of a test you can use
     def test_some_action():
         pass
 """
-import pytest
-from ckan.plugins import plugin_loaded
-from lxml.etree import XML, dump
-import ckanext.iso19115.plugin as plugin
-
-# @pytest.mark.ckan_config("ckan.plugins", "iso19115")
-# @pytest.mark.usefixtures("with_plugins")
-# def test_plugin():
-#     assert plugin_loaded("iso19115")
+from .. import utils
 
 
-def test_valid_mds(mds_schema, examples, mdb_schematron):
-    path = examples / "basic2.xml"
-    mds_schema.validate(path)
-    mds_schema.validate(path)
-    if not mdb_schematron.validate(XML(path.open("rb").read())):
-        report = mdb_schematron.validation_report
-        failed = report.xpath("//*[local-name() = 'failed-assert']")
-        errors = '\n'.join(
-            "".join(f.itertext())
-            for f in failed
-        )
-        assert False, errors
+def test_valid_mds(examples):
+    src = examples / "basic2.xml"
+    content = src.open("rb").read()
+    schema = utils.validate_schema("metadata", content)
+    schematron = utils.validate_schematron("metadata", content)
+    errors = schema + schematron
+    assert not errors, '\n'.join(errors)

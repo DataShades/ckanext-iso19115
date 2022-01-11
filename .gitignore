@@ -40,4 +40,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# validation cache
 #namespaces/
+*.pickle
