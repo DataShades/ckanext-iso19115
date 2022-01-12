@@ -58,6 +58,18 @@
 	</mdb:resourceScope>
       </mdb:MD_MetadataScope>
    </mdb:metadataScope>
+   <mdb:metadataScope>
+      <mdb:MD_MetadataScope>
+        <mdb:resourceScope>
+	  <mcc:MD_ScopeCode codeList="codeListLocation#MD_ScopeCode" codeListValue="not-dataset"/>
+	</mdb:resourceScope>
+        <mdb:name>
+          <gco:CharacterString>NotDataset name</gco:CharacterString>
+	</mdb:name>
+
+      </mdb:MD_MetadataScope>
+   </mdb:metadataScope>
+
    <mdb:contact>
       <cit:CI_Responsibility>
          <cit:role>

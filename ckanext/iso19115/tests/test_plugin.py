@@ -47,13 +47,3 @@ To temporary patch the CKAN configuration for the duration of a test you can use
     def test_some_action():
         pass
 """
-from .. import utils
-
-
-def test_valid_mds(examples):
-    src = examples / "basic2.xml"
-    content = src.open("rb").read()
-    schema = utils.validate_schema("metadata", content)
-    schematron = utils.validate_schematron("metadata", content)
-    errors = schema + schematron
-    assert not errors, '\n'.join(errors)
