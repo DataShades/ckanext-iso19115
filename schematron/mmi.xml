@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <sch:ns prefix="mmi" uri="http://standards.iso.org/iso/19115/-3/mmi/1.0"/>
+  <sch:ns prefix="gco" uri="http://standards.iso.org/iso/19115/-3/gco/1.0"/>
+  <!--
+    ISO 19115-3 base requirements for metadata instance documents
+
+    See ISO19115-1:2014(E) page 15, Figure 10 Maintenance information classes
+  -->
+
+  <!--
+    Rule: MD_MaintenanceInformation
+    Ref: {count(maintenanceAndUpdateFrequency +
+                userDefinedMaintenanceFrequency) > 0}
+    -->
+  <sch:pattern id="rule.mmi-updatefrequency">
+    <sch:title>Maintenance information MUST
+    specified an update frequency</sch:title>
+    <sch:rule context="//mmi:MD_MaintenanceInformation">
+
+      <sch:let name="userDefinedMaintenanceFrequency"
+        value="mmi:userDefinedMaintenanceFrequency/
+                gco:TM_PeriodDuration[normalize-space(.) != '']"/>
+
+      <sch:let name="maintenanceAndUpdateFrequency"
+        value="mmi:maintenanceAndUpdateFrequency/
+                mmi:MD_MaintenanceFrequencyCode/@codeListValue[normalize-space(.) != '']"/>
+
+      <sch:let name="hasCodeOrUserFreq"
+        value="count($maintenanceAndUpdateFrequency) +
+               count($userDefinedMaintenanceFrequency) > 0"/>
+
+      <sch:assert test="$hasCodeOrUserFreq">
+	The maintenance information does not define update frequency.
+      </sch:assert>
+
+    </sch:rule>
+  </sch:pattern>
+
+</sch:schema>

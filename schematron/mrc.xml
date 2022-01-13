@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <sch:ns prefix="mrc" uri="http://standards.iso.org/iso/19115/-3/mrc/1.0"/>
+  <!--
+    ISO 19115-3 base requirements for metadata instance documents
+
+    See ISO19115-1:2014(E) page 18, Figure 13 Content information classes
+  -->
+  <!--
+    Rule: MD_FeatureCatalogueDescription
+    Ref: {if FeatureCatalogue not included with resource and
+          MD_FeatureCatalogue not provided then
+            featureCatalogueCitation > 0}
+    Comment: No test because feature catalogue with resource can't be asserted (TODO-QUESTION)
+    -->
+
+
+  <!--
+    Rule: MD_SampleDimension
+    Ref: {if count(maxValue + minValue + meanValue) > 0 then units is
+          mandatory}
+    -->
+  <sch:pattern id="rule.mrc.sampledimension">
+    <sch:title>Sample dimension MUST provide a max, a min or a mean value</sch:title>
+    <sch:rule context="//mrc:MD_SampleDimension">
+
+      <sch:let name="max" value="mrc:maxValue[normalize-space(*) != '']"/>
+      <sch:let name="min" value="mrc:minValue[normalize-space(*) != '']"/>
+      <sch:let name="mean" value="mrc:meanValue[normalize-space(*) != '']"/>
+      <sch:let name="hasMaxOrMinOrMean" value="count($max) + count($min) + count($mean) > 0"/>
+
+      <sch:assert test="$hasMaxOrMinOrMean">
+	The sample dimension does not provide max, min or mean value.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+
+
+  <!--
+    Rule: MD_Band
+    Ref: {if count(boundMax + boundMin) > 0 then boundUnits is mandatory}
+    -->
+
+  <sch:pattern id="rule.mrc.bandunit">
+    <sch:title>Band MUST specified bounds units when a bound max or bound min is defined</sch:title>
+
+    <sch:rule context="//mrc:MD_Band[
+      normalize-space(mrc:boundMax/*) != '' or
+      normalize-space(mrc:boundMin/*) != ''
+      ]">
+
+      <sch:let name="max" value="normalize-space(mrc:boundMax/*)"/>
+      <sch:let name="min" value="normalize-space(mrc:boundMin/*)"/>
+      <sch:let name="units" value="normalize-space(mrc:boundUnits[normalize-space(*) != ''])"/>
+
+      <sch:let name="hasUnits"
+        value="$units != ''"/>
+
+      <sch:assert test="$hasUnits">
+	The band defined a bound without unit.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+</sch:schema>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <sch:ns prefix="cit" uri="http://standards.iso.org/iso/19115/-3/cit/1.0"/>
+  <sch:ns prefix="mri" uri="http://standards.iso.org/iso/19115/-3/mri/1.0"/>
+  <sch:ns prefix="mex" uri="http://standards.iso.org/iso/19115/-3/mex/1.0"/>
+  <sch:ns prefix="mcc" uri="http://standards.iso.org/iso/19115/-3/mcc/1.0"/>
+  <sch:ns prefix="lan" uri="http://standards.iso.org/iso/19115/-3/lan/1.0"/>
+  <sch:ns prefix="gco" uri="http://standards.iso.org/iso/19115/-3/gco/1.0"/>
+
+  <!--
+    ISO 19115-3 base requirements for metadata instance documents
+
+    See ISO19115-1:2014(E) page 21, Figure 16 Metadata extension information classes
+  -->
+
+  <!--
+    Rule: MD_ExtendedElementInformation
+    Ref: {if dataType notEqual codelist, enumeration, or codelistElement,
+          then
+          obligation, maximumOccurence and domainValue are mandatory}
+  -->
+  <sch:pattern id="rule.mex.datatypedetails">
+    <sch:title >Extended element information
+      which are not codelist, enumeration or codelistElement
+      MUST specified max occurence and domain value</sch:title>
+    <sch:rule context="//mex:MD_ExtendedElementInformation[
+      mex:dataType/mex:MD_DatatypeCode/@codeListValue != 'codelist' and
+      mex:dataType/mex:MD_DatatypeCode/@codeListValue != 'enumeration' and
+      mex:dataType/mex:MD_DatatypeCode/@codeListValue != 'codelistElement'
+      ]">
+
+      <sch:let name="name" value="normalize-space(mex:name/*)"/>
+      <sch:let name="dataType" value="normalize-space(mex:dataType/mex:MD_DatatypeCode/@codeListValue)"/>
+      <sch:let name="maximumOccurrence" value="normalize-space(mex:maximumOccurrence/*)"/>
+      <sch:let name="hasMaximumOccurrence" value="$maximumOccurrence != ''"/>
+
+
+      <sch:let name="domainValue" value="normalize-space(mex:domainValue/*)"/>
+      <sch:let name="hasDomainValue" value="$domainValue != ''"/>
+
+      <sch:assert test="$hasMaximumOccurrence">
+	Extended element information "<sch:value-of select="$name"/>"
+	of type "<sch:value-of select="$dataType"/>"
+	does not specified max occurence.
+      </sch:assert>
+      <sch:assert test="$hasDomainValue">
+	Extended element information "<sch:value-of select="$name"/>"
+	of type "<sch:value-of select="$dataType"/>"
+	does not specified domain value.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <!--
+    Rule: MD_ExtendedElementInformation
+    Ref:  {if obligation = conditional then condition is mandatory}
+  -->
+
+  <sch:pattern id="rule.mex.conditional">
+    <sch:title >Extended element information
+      which are conditional MUST explained the condition</sch:title>
+    <sch:rule context="//mex:MD_ExtendedElementInformation[
+      mex:obligation/mex:MD_ObligationCode = 'conditional'
+      ]">
+
+      <sch:let name="name" value="normalize-space(mex:name/*)"/>
+      <sch:let name="condition" value="normalize-space(mex:condition/*)"/>
+      <sch:let name="hasCondition" value="$condition != ''"/>
+
+      <sch:assert test="$hasCondition">
+	The conditional extended element "<sch:value-of select="$name"/>"
+	does not specified the condition.
+      </sch:assert>
+
+    </sch:rule>
+  </sch:pattern>
+
+
+
+
+
+  <!--
+    Rule: MD_ExtendedElementInformation
+    Ref: {if dataType = codelistElement, enumeration, or codelist then code is
+        mandatory}
+
+    Ref: {if dataType = codelistElement, enumeration, or codelist then
+        conceptName is mandatory}
+  -->
+
+  <sch:pattern id="rule.mex.mandatorycode">
+    <sch:title >Extended element information
+      which are codelist, enumeration or codelistElement
+      MUST specified a code and a concept name</sch:title>
+
+    <sch:rule context="//mex:MD_ExtendedElementInformation[
+      mex:dataType/mex:MD_DatatypeCode/@codeListValue = 'codelist' or
+      mex:dataType/mex:MD_DatatypeCode/@codeListValue = 'enumeration' or
+      mex:dataType/mex:MD_DatatypeCode/@codeListValue = 'codelistElement'
+      ]">
+
+      <sch:let name="name" value="normalize-space(mex:name/*)"/>
+      <sch:let name="dataType" value="normalize-space(mex:dataType/mex:MD_DatatypeCode/@codeListValue)"/>
+      <sch:let name="code" value="normalize-space(mex:code/*)"/>
+      <sch:let name="hasCode" value="$code != ''"/>
+
+      <sch:let name="conceptName" value="normalize-space(mex:conceptName/*)"/>
+      <sch:let name="hasConceptName" value="$conceptName != ''"/>
+
+      <sch:assert test="$hasCode">
+	The extended element "<sch:value-of select="$name"/>"
+	of type "<sch:value-of select="$dataType"/>"
+	does not specified a code.
+      </sch:assert>
+
+      <sch:assert test="$hasConceptName">
+	The extended element "<sch:value-of select="$name"/>"
+	of type "<sch:value-of select="$dataType"/>"
+	does not specified a concept name.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+
+
+  <!--
+    Rule: MD_ExtendedElementInformation
+    Ref: {if dataType = codelist, enumeration, or codelistElement then name is
+        not used}
+    Comment: No test. Should we set the element invalid if name is set ? TODO-QUESTION
+  -->
+
+
+
+</sch:schema>

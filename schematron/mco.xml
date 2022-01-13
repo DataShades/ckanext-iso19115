@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  <sch:ns prefix="mco" uri="http://standards.iso.org/iso/19115/-3/mco/1.0"/>
+  <!--
+    ISO 19115-3 base requirements for metadata instance documents
+
+    See ISO19115-1:2014(E) page 13, Figure 8 Constraint information classes
+  -->
+
+  <!--
+    Rule: MD_Releasability
+    Ref: {count(addressee + statement) > 0}
+    -->
+  <sch:pattern id="rule.mco-releasability">
+    <sch:title>Releasability MUST
+    specified an addresse or a statement</sch:title>
+
+    <sch:rule context="//mco:MD_Releasability">
+
+      <sch:let name="addressee"
+        value="mco:addressee[normalize-space(.) != '']"/>
+
+      <sch:let name="statement"
+        value="mco:statement/*[normalize-space(.) != '']"/>
+
+      <sch:let name="hasAddresseeOrStatement"
+        value="count($addressee) +
+               count($statement) > 0"/>
+
+      <sch:assert test="$hasAddresseeOrStatement">
+	The releasabilty does not define addresse or statement.
+      </sch:assert>
+
+    </sch:rule>
+  </sch:pattern>
+
+
+  <!--
+    Rule: MD_LegalConstraints
+    Ref: {If MD_LegalConstraints used then
+          count of (accessConstraints +
+                    useConstraints +
+                    otherConstraints +
+                    useLimitation +
+                    releasability) > 0}
+         -->
+  <sch:pattern id="rule.mco-legalconstraintdetails">
+    <sch:title>Legal constraint MUST
+      specified an access, use or other constraint or
+      use limitation or releasability</sch:title>
+    <sch:rule context="//mco:MD_LegalConstraints">
+
+      <sch:let name="accessConstraints"
+        value="mco:accessConstraints[
+                normalize-space(.) != '' or
+                count(.//@codeListValue[. != '']) > 0]"/>
+
+      <sch:let name="useConstraints"
+        value="mco:useConstraints/*[
+                 normalize-space(.) != '' or
+                 count(.//@codeListValue[. != '']) > 0]"/>
+
+      <sch:let name="otherConstraints"
+        value="mco:otherConstraints/*[
+                 normalize-space(.) != '']"/>
+
+      <sch:let name="useLimitation"
+        value="mco:useLimitation/*[
+                 normalize-space(.) != '' or
+                 count(.//@codeListValue[. != '']) > 0]"/>
+
+      <sch:let name="releasability"
+        value="mco:releasability/*[
+                 normalize-space(.) != '' or
+                 count(.//@codeListValue[. != '']) > 0]"/>
+
+      <sch:let name="hasDetails"
+               value="count($accessConstraints) +
+                      count($useConstraints) +
+                      count($otherConstraints) +
+                      count($useLimitation) +
+                      count($releasability)
+                      > 0"/>
+
+      <sch:assert test="$hasDetails">
+	The legal constraint is incomplete.
+      </sch:assert>
+
+    </sch:rule>
+  </sch:pattern>
+
+  <!--
+    Rule: MD_LegalConstraints
+    Ref: {otherConstraints: only documented if accessConstraints or
+      useConstraints = “otherRestrictions”}
+    -->
+  <sch:pattern id="rule.mco-legalconstraint-other">
+    <sch:title>Legal constraint defining
+      other restrictions for access or use constraint MUST
+      specified other constraint.</sch:title>
+    <sch:rule context="//mco:MD_LegalConstraints[
+      mco:accessConstraints/mco:MD_RestrictionCode/@codeListValue = 'otherRestrictions' or
+      mco:useConstraints/mco:MD_RestrictionCode/@codeListValue = 'otherRestrictions'
+      ]">
+
+
+      <sch:let name="otherConstraints"
+               value="mco:otherConstraints/*[normalize-space(.) != '']"/>
+
+      <sch:let name="hasOtherConstraints"
+               value="count($otherConstraints) > 0"/>
+
+      <sch:assert test="$hasOtherConstraints">
+	The legal constraint does not specified other constraints while access and use constraint is set to other restriction.
+      </sch:assert>
+
+    </sch:rule>
+  </sch:pattern>
+
+</sch:schema>
