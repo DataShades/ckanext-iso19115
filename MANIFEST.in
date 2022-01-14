@@ -1,5 +1,5 @@
 include README.rst
 include LICENSE
 include requirements.txt
-recursive-include ckanext/iso19115 *.html *.json *.js *.less *.css *.mo *.yml *.xml
+recursive-include ckanext/iso19115 *.html *.json *.js *.less *.css *.mo *.yml *.xml *.xsd
 recursive-include ckanext/iso19115/migration *.ini *.py *.mako

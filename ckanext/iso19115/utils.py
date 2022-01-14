@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import tempfile
 import functools
 from io import BytesIO
 import pickle
@@ -78,7 +79,7 @@ for f in _schematron_mapping.values():
 
 
 def _get_schema(name: str) -> xmlschema.XMLSchema:
-    cache = _root / "serialized" / f"{name}.pickle"
+    cache = _root / f"{name}.pickle"
     if not cache.is_file():
         schema = xmlschema.XMLSchema(
             str(_schema_mapping[name]), validation="lax"
