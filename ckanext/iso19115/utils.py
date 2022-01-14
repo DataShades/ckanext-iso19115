@@ -1,15 +1,24 @@
 from __future__ import annotations
 
 import functools
+from io import BytesIO
 import pickle
 from pathlib import Path
+from typing import Any, Container, Iterable, NamedTuple, Optional, cast
 
 import xmlschema
-from lxml import isoschematron, etree
+from lxml import isoschematron, etree as ltree
+from xml.etree import ElementTree as xtree
 import ckan.plugins.toolkit as tk
-from xmlschema import namespaces
 
-_root = Path(__file__).parent.parent.parent
+
+class CodeListValue(NamedTuple):
+    name: str
+    definition: str
+
+
+DEFAULT_XSD = "mdb2"
+_root = Path(__file__).parent
 
 _codelists = _root / "namespaces/19115/resources/Codelists/cat/codelists.xml"
 
@@ -37,7 +46,8 @@ _ns = {
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
 }
 _schema_mapping = {
-    "metadata": _root / "namespaces/19115/-3/mdb/2.0/mdb.xsd",
+    "mds2": _root / "namespaces/19115/-3/mds/2.0/mds.xsd",
+    "mdb2": _root / "namespaces/19115/-3/mdb/2.0/mdb.xsd",
 }
 
 _schematron_mapping = {
@@ -67,50 +77,123 @@ for f in _schematron_mapping.values():
     ), f"Schema {f} does not exists. Have you extracted namespaces.zip?"
 
 
-def validate_schema(name: str, content: bytes):
-    schema: xmlschema.XMLSchema
+def _get_schema(name: str) -> xmlschema.XMLSchema:
     cache = _root / "serialized" / f"{name}.pickle"
     if not cache.is_file():
-        schema = xmlschema.XMLSchema(str(_schema_mapping[name]))
+        schema = xmlschema.XMLSchema(
+            str(_schema_mapping[name]), validation="lax"
+        )
         with cache.open("wb") as dest:
             pickle.dump(schema, dest)
     with cache.open("rb") as src:
-        schema = pickle.load(src)
+        return pickle.load(src)
+
+
+def validate_schema(
+    content: bytes, name: str = DEFAULT_XSD, validate_codelists: bool = False
+):
+    schema = _get_schema(name)
+
     try:
-        schema.validate(content)
-    except xmlschema.XMLSchemaValidationError as e:
-        raise tk.ValidationError({"schema": [e.message + " " + e.reason]})
-
-
-def validate_schematron(name: str, content: bytes):
-    path = str(_schematron_mapping[name])
-    with open(path, "rb") as src:
-        sch = isoschematron.Schematron(
-            etree.XML(src.read()), store_report=True
+        schema.validate(
+            BytesIO(content),
+            extra_validator=get_extra_validator(validate_codelists),
         )
-    if sch.validate(etree.XML(content)):
+    except xmlschema.XMLSchemaValidationError as e:
+        raise tk.ValidationError({"schema": [str(e)]})
+    except (ValueError, xtree.ParseError) as e:
+        raise tk.ValidationError({"content": [str(e)]})
+
+
+def validate_schematron(content: bytes, schemas: Iterable[str] = frozenset()):
+    errors = []
+    if not schemas:
+        schemas = _schematron_mapping.keys()
+    for name in schemas:
+        path = str(_schematron_mapping[name])
+        with open(path, "rb") as src:
+            sch = isoschematron.Schematron(
+                ltree.XML(src.read()), store_report=True
+            )
+        if sch.validate(ltree.XML(content)):
+            continue
+
+        failed = sch.validation_report.xpath(
+            "//*[local-name() = 'failed-assert']/*[text()]"
+        )
+        errors.extend(
+            " ".join(l.strip() for l in f.itertext()) for f in failed
+        )
+    if errors:
+        raise tk.ValidationError({"schematron": errors})
+
+
+def validate_codelist(el: xtree.Element, xsd: xmlschema.XMLSchemaBase):
+    if xsd.type.local_name != "CodeListValue_Type":
+        return
+    if xsd.local_name not in codelist_names():
         return
 
-    failed = sch.validation_report.xpath(
-        "//*[local-name() = 'failed-assert']/*[text()]"
-    )
-    raise tk.ValidationError(
-        {
-            "schematron": [
-                " ".join(l.strip() for l in f.itertext()) for f in failed
-            ]
-        }
-    )
+    validOptions = {c.name for c in codelist_options(xsd.local_name)}
+    value = el.attrib["codeListValue"]
+    if value not in validOptions:
+        reason = (
+            f"{value} is not a valid code. Valid options are: {validOptions}"
+        )
+        raise xmlschema.XMLSchemaValidationError(xsd, el, reason)
+
+
+def get_extra_validator(codelists: bool):
+    def validator(el: xtree.Element, xsd: xmlschema.XMLSchemaBase):
+        if codelists:
+            validate_codelist(el, xsd)
+
+    return validator
+
+
+@functools.lru_cache(1)
+def codelist_names() -> Container[str]:
+    xml = ltree.XML(_codelists.open("rb").read())
+    xpath = f"//cat:codelistItem/cat:CT_Codelist/@id"
+    ns = {"cat": xml.nsmap["cat"]}
+    return xml.xpath(xpath, namespaces=ns)
 
 
 @functools.lru_cache()
-def codelist(name: str):
-    xml = etree.XML(_codelists.open("rb").read())
+def codelist_options(name: str) -> list[CodeListValue]:
+    xml = ltree.XML(_codelists.open("rb").read())
     xpath = f"//cat:codelistItem/cat:CT_Codelist[@id='{name}']/cat:codeEntry/cat:CT_CodelistValue"
-    codes = xml.xpath(xpath, namespaces=_ns)
-    return {
-        code.find("cat:identifier/gco:ScopedName", namespaces=_ns)
-        .text: code.find("cat:definition/gco:CharacterString", namespaces=_ns)
-        .text
+    ns = {"cat": xml.nsmap["cat"], "gco": xml.nsmap["gco"]}
+    codes = xml.xpath(xpath, namespaces=ns)
+
+    return [
+        CodeListValue(
+            code.find("cat:identifier/gco:ScopedName", namespaces=ns).text,
+            code.find(
+                "cat:definition/gco:CharacterString", namespaces=ns
+            ).text,
+        )
         for code in codes
+    ]
+
+
+@functools.lru_cache(1)
+def enum_elements(name: str = DEFAULT_XSD) -> dict[str, xmlschema.XsdElement]:
+    schema = _get_schema(name)
+    return {
+        e.local_name: e
+        for e in schema.maps.elements.values()
+        if isinstance(e, xmlschema.XsdElement)
+        and e.type.is_simple()
+        and getattr(e.type, "enumeration", None)
     }
+
+
+@functools.lru_cache()
+def enum_values(name: str, schema: str = DEFAULT_XSD) -> Optional[list[Any]]:
+    el = enum_elements(schema)[name]
+    if el.local_name == name:
+        type_ = cast(
+            xmlschema.validators.simple_types.XsdAtomicRestriction, el.type
+        )
+        return type_.enumeration

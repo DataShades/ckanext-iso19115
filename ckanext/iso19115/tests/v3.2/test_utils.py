@@ -1,57 +1,26 @@
 import pytest
-from ckanext.iso19115 import utils
 
 
-@pytest.mark.schematron_metadata
-@pytest.mark.schematron_identification
-@pytest.mark.schematron_constraints
-@pytest.mark.schematron_maintenance
-@pytest.mark.schematron_extent
-@pytest.mark.schematron_medium
-@pytest.mark.schematron_quality
-@pytest.mark.schematron_service
-@pytest.mark.schematron_citation
-@pytest.mark.schematron_extended
-@pytest.mark.schematron_catalogue
-@pytest.mark.schematron_measure
 @pytest.mark.xml_example("v3.2/basic.xml")
 def test_basic(schema_errors, schematron_errors):
     errors = schema_errors + schematron_errors
     assert not errors, "\n".join(errors)
 
 
-@pytest.mark.schematron_metadata
-@pytest.mark.schematron_identification
-@pytest.mark.schematron_constraints
-@pytest.mark.schematron_maintenance
-@pytest.mark.schematron_extent
-@pytest.mark.schematron_medium
-@pytest.mark.schematron_quality
-@pytest.mark.schematron_service
-@pytest.mark.schematron_citation
-@pytest.mark.schematron_extended
-@pytest.mark.schematron_catalogue
-@pytest.mark.schematron_measure
 @pytest.mark.xml_example("v3.2/minimal.xml")
 def test_minimal(schema_errors, schematron_errors):
     errors = schema_errors + schematron_errors
     assert not errors, "\n".join(errors)
 
 
-@pytest.mark.schematron_metadata
-@pytest.mark.schematron_identification
-@pytest.mark.schematron_constraints
-@pytest.mark.schematron_maintenance
-@pytest.mark.schematron_extent
-@pytest.mark.schematron_medium
-@pytest.mark.schematron_quality
-@pytest.mark.schematron_service
-@pytest.mark.schematron_citation
-@pytest.mark.schematron_extended
-@pytest.mark.schematron_catalogue
-@pytest.mark.schematron_measure
 @pytest.mark.xml_example("v3.2/identification.xml")
 def test_identification(schema_errors, schematron_errors):
+    errors = schema_errors + schematron_errors
+    assert not errors, "\n".join(errors)
+
+
+@pytest.mark.xml_example("v3.2/complex.xml")
+def test_complex(schema_errors, schematron_errors):
     errors = schema_errors + schematron_errors
     assert not errors, "\n".join(errors)
 

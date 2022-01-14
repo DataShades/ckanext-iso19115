@@ -1,0 +1,28 @@
+{% extends "admin/index.html" %}
+
+{% import "macros/form.html" as form %}
+
+{% block primary_content_inner %}
+    <form class="form" action="" method="post">
+
+	{% if errors %}
+	    <dl>
+		{% for group, error in errors.items() %}
+		    <dl>{{ group }}</dl>
+		    <dd>
+			<pre><code class="bg-danger">{{ error }}</code></pre>
+		    </dd>
+		{% endfor %}
+	    </dl>
+	{% endif %}
+
+	{{ form.textarea('content', id='field-content', label=_('Content'), value=data.content, rows=20) }}
+
+	<div class="form-actions">
+	    <button class="btn btn-primary" type="submit">
+	    {{ _('Validate') }}
+	    </button>
+	</div>
+
+    </form>
+{% endblock primary_content_inner %}

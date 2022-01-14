@@ -23,7 +23,7 @@ def example(examples, request):
 @pytest.fixture()
 def schema_errors(example):
     try:
-        utils.validate_schema("metadata", example)
+        utils.validate_schema(example, validate_codelists=True)
     except tk.ValidationError as e:
         return e.error_dict["schema"]
     return []
@@ -37,8 +37,7 @@ def schematron_errors(example, request):
         if m.name.startswith("schematron_")
     }
     try:
-        for schema in schemas:
-            utils.validate_schematron(schema, example)
+        utils.validate_schematron(example, schemas)
     except tk.ValidationError as e:
         return e.error_dict["schematron"]
     return []

@@ -83,7 +83,7 @@
 
  <!-- mandatory since MD_MetadataScope is not specified, and defaults to 'dataset' enforced by schematron rule -->
             <mri:topicCategory>
-                <mri:MD_TopicCategoryCode>boundaries</mri:MD_TopicCategoryCode>
+                <mri:MD_TopicCategoryCode>biota</mri:MD_TopicCategoryCode>
             </mri:topicCategory>
 
 <!-- a bounding box is required because the mdb:MD_MetadataScope is not specified; enforced by schematron rule-->
