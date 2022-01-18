@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import ckan.plugins.toolkit as tk
 from flask import Blueprint
 from flask.views import MethodView
+
 from ckanext.iso19115 import utils
-import ckan.plugins.toolkit as tk
 
 iso19115 = Blueprint("iso19115", __name__)
 

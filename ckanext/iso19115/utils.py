@@ -1,21 +1,24 @@
 from __future__ import annotations
 
-import tempfile
 import functools
-from io import BytesIO
 import pickle
+from io import BytesIO
 from pathlib import Path
 from typing import Any, Container, Iterable, NamedTuple, Optional, cast
-
-import xmlschema
-from lxml import isoschematron, etree as ltree
 from xml.etree import ElementTree as xtree
+
 import ckan.plugins.toolkit as tk
+import xmlschema
+from lxml import etree as ltree
+from lxml import isoschematron
+
+from . import builder
 
 
 class CodeListValue(NamedTuple):
     name: str
     definition: str
+    location: str = "http://standards.iso.org/iso/19115/resources/Codelist/lan/CharacterSetCode.xml"
 
 
 DEFAULT_XSD = "mdb2"
@@ -23,7 +26,7 @@ _root = Path(__file__).parent
 
 _codelists = _root / "namespaces/19115/resources/Codelists/cat/codelists.xml"
 
-_ns = {
+ns = {
     "cat": "http://standards.iso.org/iso/19115/-3/cat/1.0",
     "cit": "http://standards.iso.org/iso/19115/-3/cit/2.0",
     "gco": "http://standards.iso.org/iso/19115/-3/gco/1.0",
@@ -43,6 +46,7 @@ _ns = {
     "mrl": "http://standards.iso.org/iso/19115/-3/mrl/2.0",
     "mrs": "http://standards.iso.org/iso/19115/-3/mrs/1.0",
     "msr": "http://standards.iso.org/iso/19115/-3/msr/2.0",
+    "gml": "http://www.opengis.net/gml/3.2",
     "xlink": "http://www.w3.org/1999/xlink",
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
 }
@@ -78,9 +82,9 @@ for f in _schematron_mapping.values():
     ), f"Schema {f} does not exists. Have you extracted namespaces.zip?"
 
 
-def _get_schema(name: str) -> xmlschema.XMLSchema:
+def _get_schema(name: str, rebuild: bool = False) -> xmlschema.XMLSchema:
     cache = _root / f"{name}.pickle"
-    if not cache.is_file():
+    if not cache.is_file() or rebuild:
         schema = xmlschema.XMLSchema(
             str(_schema_mapping[name]), validation="lax"
         )
@@ -90,12 +94,19 @@ def _get_schema(name: str) -> xmlschema.XMLSchema:
         return pickle.load(src)
 
 
+def get_builder(root, name: str = DEFAULT_XSD) -> builder.Builder:
+    schema = _get_schema(name)
+    return builder.Builder(schema, root)
+
+
 def validate_schema(
     content: bytes, name: str = DEFAULT_XSD, validate_codelists: bool = False
 ):
     schema = _get_schema(name)
-
     try:
+        # from icecream import ic
+        # ic(schema.decode(BytesIO(content), converter=xmlschema.BadgerFishConverter))
+
         schema.validate(
             BytesIO(content),
             extra_validator=get_extra_validator(validate_codelists),
@@ -156,22 +167,24 @@ def get_extra_validator(codelists: bool):
 def codelist_names() -> Container[str]:
     xml = ltree.XML(_codelists.open("rb").read())
     xpath = f"//cat:codelistItem/cat:CT_Codelist/@id"
-    ns = {"cat": xml.nsmap["cat"]}
-    return xml.xpath(xpath, namespaces=ns)
+    namespaces = {"cat": xml.nsmap["cat"]}
+    return xml.xpath(xpath, namespaces=namespaces)
 
 
 @functools.lru_cache()
 def codelist_options(name: str) -> list[CodeListValue]:
     xml = ltree.XML(_codelists.open("rb").read())
     xpath = f"//cat:codelistItem/cat:CT_Codelist[@id='{name}']/cat:codeEntry/cat:CT_CodelistValue"
-    ns = {"cat": xml.nsmap["cat"], "gco": xml.nsmap["gco"]}
-    codes = xml.xpath(xpath, namespaces=ns)
+    namespaces = {"cat": xml.nsmap["cat"], "gco": xml.nsmap["gco"]}
+    codes = xml.xpath(xpath, namespaces=namespaces)
 
     return [
         CodeListValue(
-            code.find("cat:identifier/gco:ScopedName", namespaces=ns).text,
             code.find(
-                "cat:definition/gco:CharacterString", namespaces=ns
+                "cat:identifier/gco:ScopedName", namespaces=namespaces
+            ).text,
+            code.find(
+                "cat:definition/gco:CharacterString", namespaces=namespaces
             ).text,
         )
         for code in codes

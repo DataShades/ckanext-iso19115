@@ -117,7 +117,7 @@
       <!-- Check at least one non empty creation date element is defined. -->
       <sch:let name="hasAtLeastOneCreationDate"
         value="count(./mdb:dateInfo/cit:CI_Date[
-                    normalize-space(cit:date/gco:DateTime) != '' and
+                    normalize-space(cit:date/gco:Date|cit:date/gco:DateTime) != '' and
                     cit:dateType/cit:CI_DateTypeCode/@codeListValue = 'creation']
                     ) &gt; 0"/>
 

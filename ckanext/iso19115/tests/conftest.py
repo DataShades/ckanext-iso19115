@@ -1,7 +1,9 @@
 from pathlib import Path
-import pytest
-from ckanext.iso19115 import utils
+
 import ckan.plugins.toolkit as tk
+import pytest
+
+from ckanext.iso19115 import utils
 
 
 @pytest.fixture(scope="session")

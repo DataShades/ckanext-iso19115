@@ -18,4 +18,5 @@
   <import namespace="http://standards.iso.org/iso/19115/-3/gex/1.0" schemaLocation="../../../../19115/-3/gex/1.0/gex.xsd"/>
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <import namespace="http://standards.iso.org/iso/19115/-3/mds/2.0" schemaLocation="../../../../19115/-3/mds/2.0/mds.xsd"/>
+  <import namespace="http://standards.iso.org/iso/19115/-3/mex/1.0" schemaLocation="../../../../19115/-3/mex/1.0/mex.xsd"/>
 </schema>

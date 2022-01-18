@@ -23,6 +23,7 @@
    http://standards.iso.org/iso/19115/-3/mrc/2.0 ../../mrc/2.0/mrc.xsd
    http://standards.iso.org/iso/19115/-3/msr/2.0 ../../msr/2.0/msr.xsd
    http://standards.iso.org/iso/19115/-3/mrl/2.0 ../../mrl/2.0/mrl.xsd">
+
    <mdb:contact>
 <!-- com -->
    </mdb:contact>
