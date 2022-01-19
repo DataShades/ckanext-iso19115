@@ -27,6 +27,16 @@ def build():
     pass
 
 
+@build.command("dataset")
+@click.argument("id")
+def build_dataset(id: str):
+    user = tk.get_action("get_site_user")({"ignore_auth": True}, {})
+    pkg = tk.get_action("iso19115_package_show")({"user": user}, {"id": id})
+    from icecream import ic
+
+    ic(pkg)
+
+
 @build.command("xml")
 @click.argument("source", type=click.File("r"), default=sys.stdin)
 def build_xml(source):

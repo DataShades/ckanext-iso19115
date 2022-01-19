@@ -2,12 +2,18 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 
 from . import cli, views
+from .logic import action
 
 
 class Iso19115Plugin(plugins.SingletonPlugin):
+    plugins.implements(plugins.IActions)
     plugins.implements(plugins.IClick)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IConfigurer)
+
+    # IActions
+    def get_actions(self):
+        return action.get_actions()
 
     # IClick
     def get_commands(self):
