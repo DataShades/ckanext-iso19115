@@ -1,11 +1,11 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-
 
 import datetime
-
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional, Union
-from . import bf, make, codelist
+
+from . import bf, codelist, make
+
 if TYPE_CHECKING:
     from .. import types
 
@@ -21,40 +21,43 @@ class CI_Date:
         elif isinstance(self.date, datetime.date):
             self.date = make("gco:Date", self.date)
 
-
     def as_bf(self):
         data = {
             "cit:date": bf(self.date),
             "cit:dateType": {
-                "cit:CI_DateTypeCode": codelist("CI_DateTypeCode", self.dateType)
+                "cit:CI_DateTypeCode": codelist(
+                    "CI_DateTypeCode", self.dateType
+                )
             },
         }
         return data
 
+
 @dataclass
 class CI_Telephone:
-     number: str
-     numberType: Optional[str] = None # codelist("CI_TelephoneTypeCode")
+    number: str
+    numberType: Optional[str] = None  # codelist("CI_TelephoneTypeCode")
+
 
 @dataclass
 class CI_Address:
-     deliveryPoint: list[str] = field(default_factory=list)
-     city: Optional[str] = None
-     administrativeArea: Optional[str] = None
-     postalCode: Optional[str] = None
-     country: Optional[str] = None
-     electronicMailAddress: list[str] = field(default_factory=list)
+    deliveryPoint: list[str] = field(default_factory=list)
+    city: Optional[str] = None
+    administrativeArea: Optional[str] = None
+    postalCode: Optional[str] = None
+    country: Optional[str] = None
+    electronicMailAddress: list[str] = field(default_factory=list)
 
 
 @dataclass
 class CI_OnlineResource:
-     linkage: str
-     protocol: Optional[str] = None
-     applicationProfile: Optional[str] = None
-     name: Optional[str] = None
-     description: Optional[str] = None
-     function: Optional[str] = None # codelist("CI_OnLineFunctionCode")
-     protocolRequest: Optional[str] = None
+    linkage: str
+    protocol: Optional[str] = None
+    applicationProfile: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    function: Optional[str] = None  # codelist("CI_OnLineFunctionCode")
+    protocolRequest: Optional[str] = None
 
 
 @dataclass
@@ -71,17 +74,21 @@ class CI_Contact:
 class AbstractCI_Party:
     name: Optional[str] = None
     contactInfo: list[CI_Contact] = field(default_factory=list)
-    partyIdentifier: list[types.mcc.MD_Identifier] = field(default_factory=list)
+    partyIdentifier: list[types.mcc.MD_Identifier] = field(
+        default_factory=list
+    )
 
 
 @dataclass
 class CI_Individual(AbstractCI_Party):
     positionName: Optional[str] = None
 
+
 @dataclass
 class CI_Organisation:
     logo: list[types.mcc.MD_BrowseGraphic] = field(default_factory=list)
     individual: list[CI_Individual] = field(default_factory=list)
+
 
 @dataclass
 class CI_Responsibility:
@@ -94,9 +101,7 @@ class CI_Responsibility:
             "cit:role": {
                 "cit:CI_RoleCode": codelist("CI_RoleCode", self.role)
             },
-            "cit:party": [{
-                "cit:CI_Individual": {}
-            }]
+            "cit:party": bf(self.party),
         }
         return data
 
@@ -110,17 +115,24 @@ class CI_Series:
 
 @dataclass
 class CI_Citation:
-     title: str
-     alternateTitle: list[str] = field(default_factory=list)
-     date: list[CI_Date] = field(default_factory=list)
-     edition: Optional[str] = None
-     editionDate: Optional[types.gco.DateTime] = None
-     identifier: list[types.mcc.MD_Identifier] = field(default_factory=list)
-     citedResponsibleParty: list[CI_Responsibility] = field(default_factory=list)
-     presentationForm: list[str] = field(default_factory=list) # codelist("CI_PresentationFormCode")
-     series: Optional[CI_Series] = None
-     otherCitationDetails: list[str] = field(default_factory=list)
-     ISBN: Optional[str] = None
-     ISSN: Optional[str] = None
-     onlineResource: list[CI_OnlineResource] = field(default_factory=list)
-     graphic: list[types.mcc.MD_BrowseGraphic] = field(default_factory=list)
+    title: str
+    alternateTitle: list[str] = field(default_factory=list)
+    date: list[CI_Date] = field(default_factory=list)
+    edition: Optional[str] = None
+    editionDate: Optional[types.gco.DateTime] = None
+    identifier: list[types.mcc.MD_Identifier] = field(default_factory=list)
+    citedResponsibleParty: list[CI_Responsibility] = field(
+        default_factory=list
+    )
+    presentationForm: list[str] = field(
+        default_factory=list
+    )  # codelist("CI_PresentationFormCode")
+    series: Optional[CI_Series] = None
+    otherCitationDetails: list[str] = field(default_factory=list)
+    ISBN: Optional[str] = None
+    ISSN: Optional[str] = None
+    onlineResource: list[CI_OnlineResource] = field(default_factory=list)
+    graphic: list[types.mcc.MD_BrowseGraphic] = field(default_factory=list)
+
+    def as_bf(self):
+        return {"cit:title": {"gco:CharacterString": {"$": self.title}}}

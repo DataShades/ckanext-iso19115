@@ -1,16 +1,15 @@
 from __future__ import annotations
-from dataclasses import dataclass
 
-import enum
 import datetime
-
+import enum
+from dataclasses import dataclass
 
 
 class DateFormat(enum.Enum):
     datetime = "%Y-%m-%dT%H:%M:%S"
-    date = "%Y-%m-%dT%H:%M:%S"
-    gYearMonth = "%Y-%m-%dT%H:%M:%S"
-    gYear = "%Y-%m-%dT%H:%M:%S"
+    date = "%Y-%m-%d"
+    gYearMonth = "%Y-%m"
+    gYear = "%Y"
 
     def key(self):
         if self is DateFormat.datetime:
@@ -19,7 +18,6 @@ class DateFormat(enum.Enum):
 
     def from_datetime(self, dt: datetime.date):
         return dt.strftime(self.value)
-
 
 
 @dataclass
@@ -38,3 +36,8 @@ class Date:
 
     def as_bf(self):
         return {"$": self.format.from_datetime(self.value)}
+
+
+@dataclass
+class TM_PeriodDuration:
+    ...

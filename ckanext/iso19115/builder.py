@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import contextlib
 import contextvars
-import re
 import enum
 import json
 import logging
 import operator
+import re
 from typing import Any, Iterable, Optional
 
-import xmlschema
 import exrex
+import xmlschema
 from faker import Faker
 from xmlschema.validators import (
     XsdAnyElement,

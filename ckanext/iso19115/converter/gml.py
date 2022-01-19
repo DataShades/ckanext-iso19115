@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
@@ -10,9 +11,11 @@ if TYPE_CHECKING:
 class GenericMetaData:
     pass
 
+
 @dataclass
 class AbstractSurface:
     pass
+
 
 @dataclass
 class AbstractCurve:
@@ -23,21 +26,26 @@ class AbstractCurve:
 class AbstractCurveSegment:
     pass
 
+
 @dataclass
 class AbstractSolid:
     pass
+
 
 @dataclass
 class AbstractGeometricPrimitive:
     pass
 
+
 @dataclass
 class AbstractSurfacePatch:
     pass
 
+
 @dataclass
 class AbstractRing:
     pass
+
 
 @dataclass
 class AbstractGeometry:
@@ -57,6 +65,7 @@ class ArcStringByBulge(AbstractCurveSegment):
     posList: list[str] = field(default_factory=list)
     bulge: list[str] = field(default_factory=list)
 
+
 @dataclass
 class LineStringSegment(AbstractCurveSegment):
     pos: list[str] = field(default_factory=list)
@@ -72,6 +81,7 @@ class GeodesicString(AbstractCurveSegment):
     pointProperty: list[Point] = field(default_factory=list)
     posList: list[str] = field(default_factory=list)
 
+
 @dataclass
 class BSpline(AbstractCurveSegment):
     pos: list[str] = field(default_factory=list)
@@ -82,10 +92,12 @@ class BSpline(AbstractCurveSegment):
     degree: int = 0
     knot: Optional[Knot] = None
 
+
 @dataclass
 class OffsetCurve(AbstractCurveSegment):
     offsetBase: Optional[AbstractCurve] = None
     distance: Optional[str] = None
+
 
 @dataclass
 class ArcByCenterPoint(AbstractCurveSegment):
@@ -106,6 +118,7 @@ class ArcString(AbstractCurveSegment):
     pointProperty: list[Point] = field(default_factory=list)
     pointRep: list[Point] = field(default_factory=list)
     posList: list[str] = field(default_factory=list)
+
 
 @dataclass
 class CubicSpline(AbstractCurveSegment):
@@ -145,6 +158,7 @@ class MultiSurface(AbstractGeometry):
     surfaceMember: list[AbstractSurface] = field(default_factory=list)
     surfaceMembers: list[AbstractSurface] = field(default_factory=list)
 
+
 @dataclass
 class MultiCurve(AbstractGeometry):
     curveMember: list[AbstractCurve] = field(default_factory=list)
@@ -162,18 +176,24 @@ class Grid(AbstractGeometry):
     axisLabels: list[str] = field(default_factory=list)
     axisName: list[str] = field(default_factory=list)
 
+
 @dataclass
 class MultiPoint(AbstractGeometry):
     pointMember: list[Point] = field(default_factory=list)
     pointMembers: list[Point] = field(default_factory=list)
 
+
 @dataclass
-class CompositeSolid(AbstractGeometry, AbstractGeometricPrimitive, AbstractSolid):
+class CompositeSolid(
+    AbstractGeometry, AbstractGeometricPrimitive, AbstractSolid
+):
     solidMember: list[AbstractSolid] = field(default_factory=list)
 
 
 @dataclass
-class Ring(AbstractGeometry, AbstractRing, AbstractGeometricPrimitive, AbstractCurve):
+class Ring(
+    AbstractGeometry, AbstractRing, AbstractGeometricPrimitive, AbstractCurve
+):
     curveMember: list[AbstractCurve] = field(default_factory=list)
 
 
@@ -187,35 +207,50 @@ class MultiSolid(AbstractGeometry):
 class Shell(AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface):
     surfaceMember: list[AbstractSurface] = field(default_factory=list)
 
+
 @dataclass
 class MultiGeometry(AbstractGeometry):
     geometryMember: list[AbstractGeometry] = field(default_factory=list)
     geometryMembers: list[AbstractGeometry] = field(default_factory=list)
 
+
 @dataclass
-class CompositeSurface(AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface):
+class CompositeSurface(
+    AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface
+):
     surfaceMember: list[AbstractSurface] = field(default_factory=list)
+
 
 @dataclass
 class Point(AbstractGeometry, AbstractGeometricPrimitive):
     pos: list[str] = field(default_factory=list)
     coordinates: Optional[str] = None
 
-@dataclass
-class CompositeCurve(AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve):
-    curveMember: list[AbstractCurve] = field(default_factory=list)
 
 @dataclass
-class OrientableCurve(AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve):
+class CompositeCurve(
+    AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve
+):
+    curveMember: list[AbstractCurve] = field(default_factory=list)
+
+
+@dataclass
+class OrientableCurve(
+    AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve
+):
     baseCurve: list[AbstractCurve] = field(default_factory=list)
+
 
 @dataclass
 class Solid(AbstractGeometry, AbstractGeometricPrimitive, AbstractSolid):
     exterior: Optional[Shell] = None
     interior: list[Shell] = field(default_factory=list)
 
+
 @dataclass
-class LinearRing(AbstractGeometry, AbstractRing, AbstractGeometricPrimitive, AbstractCurve):
+class LinearRing(
+    AbstractGeometry, AbstractRing, AbstractGeometricPrimitive, AbstractCurve
+):
     pos: list[str] = field(default_factory=list)
     coordinates: Optional[str] = None
     pointProperty: list[Point] = field(default_factory=list)
@@ -229,17 +264,22 @@ class GeometricComplex(AbstractGeometry):
 
 
 @dataclass
-class OrientableSurface(AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface):
+class OrientableSurface(
+    AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface
+):
     baseSurface: Optional[AbstractSurface] = None
+
 
 @dataclass
 class Surface(AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface):
     patches: list[AbstractSurfacePatch] = field(default_factory=list)
 
+
 @dataclass
 class Polygon(AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface):
     exterior: Optional[AbstractRing] = None
     interior: list[AbstractRing] = field(default_factory=list)
+
 
 @dataclass
 class GridEnvelope:
@@ -247,31 +287,36 @@ class GridEnvelope:
     high: list[str] = field(default_factory=list)
 
 
-
 @dataclass
 class Rectangle(AbstractSurfacePatch):
     exterior: Optional[AbstractRing] = None
+
 
 @dataclass
 class Cone(AbstractSurfacePatch):
     rows: list[Row] = field(default_factory=list)
 
+
 @dataclass
 class Triangle(AbstractSurfacePatch):
     exterior: Optional[AbstractRing] = None
+
 
 @dataclass
 class PolygonPatch(AbstractSurfacePatch):
     exterior: Optional[AbstractRing] = None
     interior: list[AbstractRing] = field(default_factory=list)
 
+
 @dataclass
 class Sphere(AbstractSurfacePatch):
     rows: list[Row] = field(default_factory=list)
 
+
 @dataclass
 class Cylinder(AbstractSurfacePatch):
     rows: list[Row] = field(default_factory=list)
+
 
 @dataclass
 class Row:
@@ -279,11 +324,12 @@ class Row:
     posList: list[str] = field(default_factory=list)
     pos: list[str] = field(default_factory=list)
 
+
 @dataclass
 class Knot:
-     value: str
-     weight: str
-     multiplicity: Optional[int] = None
+    value: str
+    weight: str
+    multiplicity: Optional[int] = None
 
 
 @dataclass
@@ -312,9 +358,11 @@ class TimeEdge(AbstractTimePrimitive):
     end: Optional[TimeInstant] = None
     extent: Optional[TimePeriod] = None
 
+
 @dataclass
 class TimeInstant(AbstractTimePrimitive):
     timePosition: Optional[str] = None
+
 
 @dataclass
 class TimeNode(AbstractTimePrimitive):

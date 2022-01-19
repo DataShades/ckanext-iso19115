@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
@@ -9,9 +10,12 @@ if TYPE_CHECKING:
 @dataclass
 class EX_Extent:
     description: Optional[str] = None
-    geographicElement: list[AbstractEX_GeographicExtent] = field(default_factory=list)
+    geographicElement: list[AbstractEX_GeographicExtent] = field(
+        default_factory=list
+    )
     temporalElement: list[EX_TemporalExtent] = field(default_factory=list)
     verticalElement: list[EX_VerticalExtent] = field(default_factory=list)
+
 
 @dataclass
 class EX_VerticalExtent:
@@ -30,13 +34,16 @@ class EX_TemporalExtent:
 class AbstractEX_GeographicExtent:
     extentTypeCode: bool
 
+
 @dataclass
 class EX_GeographicDescription(AbstractEX_GeographicExtent):
     geographicIdentifier: types.mcc.MD_Identifier
 
+
 @dataclass
 class EX_BoundingPolygon(AbstractEX_GeographicExtent):
     polygon: list[types.gml.AbstractGeometry] = field(default_factory=list)
+
 
 @dataclass
 class EX_GeographicBoundingBox(AbstractEX_GeographicExtent):

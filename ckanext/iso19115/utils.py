@@ -106,6 +106,7 @@ def lookup(root: str, schema: xmlschema.XMLSchema):
     # el = schema.find(f".//{root}", namespaces=utils.ns)
     return el
 
+
 def _get_schema(name: str, rebuild: bool = False) -> xmlschema.XMLSchema:
     cache = _root / f"{name}.pickle"
     if not cache.is_file() or rebuild:

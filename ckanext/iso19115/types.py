@@ -1,6 +1,31 @@
-from ckanext.iso19115.converter import cit, gco, mdb, mcc, mco, gex, gml, mrs
-
+from ckanext.iso19115.converter import (
+    cit,
+    gco,
+    gex,
+    gml,
+    lan,
+    mcc,
+    mco,
+    mdb,
+    mmi,
+    mrd,
+    mri,
+    mrs,
+    srv,
+)
 
 __all__ = [
-    "cit", "gco", "mdb", "mcc", "mco", "gex", "gml", "mrs"
+    "cit",
+    "gco",
+    "mdb",
+    "mcc",
+    "mco",
+    "gex",
+    "gml",
+    "mrs",
+    "mri",
+    "mmi",
+    "mrd",
+    "srv",
+    "lan",
 ]
