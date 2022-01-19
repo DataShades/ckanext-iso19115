@@ -6,7 +6,6 @@ from typing import Optional
 import ckan.plugins.toolkit as tk
 import click
 import xmlschema
-from faker import Faker
 
 from ckanext.iso19115 import utils
 
@@ -44,15 +43,15 @@ def build_xml(source):
 @click.option("-r", "--root", default="mdb:MD_Metadata")
 @click.option("-s", "--skip-optional", is_flag=True)
 @click.option("-q", "--qualified", is_flag=True)
+@click.option("-d", "--depth", type=int, default=0)
 @click.option(
     "-f", "--format", type=click.Choice(["overview"]), default="overview"
 )
 def build_describe(
-    root: str, skip_optional: bool, format: str, qualified: bool
+    root: str, skip_optional: bool, format: str, qualified: bool, depth: int
 ):
-
     b = utils.get_builder(root)
-    b.print_tree(format, skip_optional, qualified)
+    b.print_tree(format, skip_optional, qualified, depth)
 
 
 @build.command("example")
@@ -65,12 +64,8 @@ def build_describe(
     "--seed",
 )
 def build_example(root: str, format: str, seed: Optional[str]):
-    if not seed:
-        seed = Faker().pystr()
-    log.info("Using seed: %s", seed)
-    Faker.seed(seed)
     b = utils.get_builder(root)
-    example = b.example(format)
+    example = b.example(format, seed=seed)
     click.echo(example)
 
 

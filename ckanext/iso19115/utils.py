@@ -27,6 +27,7 @@ _root = Path(__file__).parent
 _codelists = _root / "namespaces/19115/resources/Codelists/cat/codelists.xml"
 
 ns = {
+    "srv": "http://standards.iso.org/iso/19115/-3/srv/2.0",
     "cat": "http://standards.iso.org/iso/19115/-3/cat/1.0",
     "cit": "http://standards.iso.org/iso/19115/-3/cit/2.0",
     "gco": "http://standards.iso.org/iso/19115/-3/gco/1.0",
@@ -81,6 +82,29 @@ for f in _schematron_mapping.values():
         f.is_file()
     ), f"Schema {f} does not exists. Have you extracted namespaces.zip?"
 
+
+def lookup(root: str, schema: xmlschema.XMLSchema):
+    qualified_root = root
+
+    try:
+        _ns, tag = root.split(":")
+        qualified_root = "{%s}%s" % (ns[_ns], tag)
+    except (ValueError, KeyError):
+        pass
+
+    el = None
+    if root in schema.maps.elements:
+        el = schema.maps.elements[root]
+    else:
+        for component in schema.maps.iter_components():
+            if not isinstance(component, xmlschema.XsdElement):
+                continue
+            if component.qualified_name == qualified_root:
+                el = component
+                break
+
+    # el = schema.find(f".//{root}", namespaces=utils.ns)
+    return el
 
 def _get_schema(name: str, rebuild: bool = False) -> xmlschema.XMLSchema:
     cache = _root / f"{name}.pickle"

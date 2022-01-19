@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import contextlib
 import contextvars
+import re
 import enum
 import json
-from pprint import pformat
+import logging
+import operator
 from typing import Any, Iterable, Optional
 
 import xmlschema
+import exrex
 from faker import Faker
 from xmlschema.validators import (
     XsdAnyElement,
@@ -22,6 +25,8 @@ from xmlschema.validators.complex_types import XsdComplexType
 
 from . import utils
 
+log = logging.getLogger(__name__)
+
 
 class Validation(enum.Enum):
     strict = "strict"
@@ -29,10 +34,10 @@ class Validation(enum.Enum):
     skip = "skip"
 
 
-_visited = contextvars.ContextVar("visited")
-_recursive = contextvars.ContextVar("recursive", default=False)
-_depth = contextvars.ContextVar("depth", default=0)
-_inside_union = contextvars.ContextVar("inside_union", default=False)
+visited = contextvars.ContextVar("visited")
+recursive = contextvars.ContextVar("recursive", default=False)
+depth = contextvars.ContextVar("depth", default=0)
+inside_union = contextvars.ContextVar("inside_union", default=False)
 
 faker = Faker()
 
@@ -49,30 +54,9 @@ def set_context(data: dict[contextvars.ContextVar[Any], Any]):
 
 class Builder:
     root: xmlschema.XsdElement
-    position: Any
-    data: dict[str, Any]
 
     def __init__(self, schema: xmlschema.XMLSchema, root: str):
-        qualified_root = root
-
-        try:
-            _ns, tag = root.split(":")
-            qualified_root = "{%s}%s" % (utils.ns[_ns], tag)
-        except (ValueError, KeyError):
-            pass
-
-        el = None
-        if root in schema.maps.elements:
-            el = schema.maps.elements[root]
-        else:
-            for component in schema.maps.iter_components():
-                if not isinstance(component, XsdElement):
-                    continue
-                if component.qualified_name == qualified_root:
-                    el = component
-                    break
-
-        # el = schema.find(f".//{root}", namespaces=utils.ns)
+        el = utils.lookup(root, schema)
 
         assert isinstance(
             el, XsdElement
@@ -80,17 +64,17 @@ class Builder:
 
         self.root = el
 
-    def build(
-        self,
-        data,
-        validation=Validation.strict,
-        converter=xmlschema.BadgerFishConverter,
-    ):
+    def build(self, data):
         data["@xmlns"] = utils.ns
         el = self.root.encode(data, converter=xmlschema.BadgerFishConverter)
         return el
 
-    def example(self, fmt: str):
+    def example(self, fmt: str, seed: Optional[str] = None):
+        if not seed:
+            seed = Faker().pystr()
+        log.info("Using seed: %s", seed)
+        Faker.seed(seed)
+
         tree = BfsTree(self.root, False, False)
         example = tree.dictize()
         if fmt == "xml":
@@ -99,18 +83,23 @@ class Builder:
                 el, namespaces=utils.ns, xml_declaration=True
             )
         else:
-            return json.dumps(example)
+            return json.dumps(example, indent=2)
 
-    def print_tree(self, fmt, skip_optional, qualified: bool = True):
-        tree = DfsTree(self.root, skip_optional, qualified)
+    def print_tree(
+        self, fmt, skip_optional, qualified: bool = True, max_depth: int = 0
+    ):
+        tree = DfsTree(self.root, skip_optional, qualified, max_depth)
         if fmt == "overview":
             print(tree)
 
 
 class Tree:
-    def __init__(self, node, skip_optional: bool, qualified: bool):
+    def __init__(
+        self, node, skip_optional: bool, qualified: bool, max_depth: int = 0
+    ):
         self.skip_optional = skip_optional
         self.qualified = qualified
+        self.max_depth = max_depth
         self.node = make_node(node)
 
     def _yield_from_node(self, node: BaseNode):
@@ -118,7 +107,7 @@ class Tree:
 
     def __iter__(self):
         ctx = contextvars.copy_context()
-        with set_context({_visited: set()}):
+        with set_context({visited: set()}):
             yield from ctx.run(self._yield_from_node, self.node)
 
 
@@ -130,7 +119,12 @@ class BfsTree(Tree):
 
 class DfsTree(Tree):
     def _yield_from_node(self, node: BaseNode):
+
         if self.skip_optional and node.is_composed() and node.is_optional():
+            return
+
+        if self.max_depth and self.max_depth - 1 < depth.get():
+            yield TooDeepNode(node.node)
             return
 
         if node.visited() and node.is_composed():
@@ -177,16 +171,16 @@ class BaseNode:
     def visit(self):
         with set_context(
             {
-                _recursive: self.visited(),
-                _depth: _depth.get() + 1,
-                _inside_union: self.is_abstract() or self.is_union(),
+                recursive: self.visited(),
+                depth: depth.get() + 1,
+                inside_union: self.is_abstract() or self.is_union(),
             }
         ):
-            _visited.get().add(self.id)
+            visited.get().add(self.id)
             yield self.children
 
     def visited(self):
-        return bool(self.id and self.id in _visited.get())
+        return bool(self.id and self.id in visited.get())
 
     def name(self, qualified: bool):
         if qualified:
@@ -216,9 +210,10 @@ class BaseNode:
 
         if root.is_abstract():
             with root.visit() as options:
-                # TODO: think about random implementation
-                # root = faker.random_element(options)
-                root = next(options)
+
+                root = faker.random_element(
+                    sorted(options, key=operator.attrgetter("id"))
+                )
         return root
 
     def example(self) -> Any:
@@ -237,10 +232,9 @@ class BaseNode:
         if name and self.node.abstract:
             name = name.join("<>")
 
-        depth = _depth.get()
-        indent = depth * "    "
+        indent = depth.get() * "    "
 
-        prefix = "|" if _inside_union.get() else " "
+        prefix = "|" if inside_union.get() else " "
 
         attributes = []
         if isinstance(self.node, XsdElement):
@@ -265,11 +259,17 @@ class BaseNode:
         return options
 
 
+class TooDeepNode(BaseNode):
+    def into_indent(self, *args, **kwargs):
+        value = super().into_indent(*args, **kwargs)
+
+        return f"{value} (too deep...)"
+
+
 class RecursionNode(BaseNode):
     def into_indent(self, *args, **kwargs):
         value = super().into_indent(*args, **kwargs)
-        depth = _depth.get() + 1
-        indent = depth * "    "
+        indent = (depth.get() + 1) * "    "
 
         return f"{value} (seen before)\n{indent}..."
 
@@ -277,10 +277,33 @@ class RecursionNode(BaseNode):
 class AtomicNode(BaseNode):
     def example(self):
         node = self.node.primitive_type
+        ln = node.local_name
 
         if node.is_datetime():
-            return faker.date()
+            if ln == "duration":
+                return faker.pystr_format("P#YT#H")
+
+            dt = faker.date_time()
+            fmt = {
+                "date": "%Y-%m-%d",
+                "dateTime": "%Y-%m-%dT%H:%M:%S",
+                "time": "%H:%M:%S",
+                "gYearMonth": "%Y-%m",
+                "gYear": "%Y",
+            }
+            assert ln in fmt, f"Unsupported date type {ln}"
+
+            return dt.strftime(fmt[ln])
+
         if node.local_name == "string":
+            if self.node.patterns:
+                pat = self.node.patterns.regexps[0]
+                try:
+                    return exrex.getone(pat)
+                except re.error as e:
+                    log.error(e)
+                    return faker.pystr()
+
             return faker.sentence()
         if node.local_name == "boolean":
             return faker.pybool()
@@ -311,11 +334,14 @@ class ElementNode(BaseNode):
                     for child in children.iter_elements()
                     if not isinstance(child, XsdAnyElement)
                 ]
-                if model == "choice":
-                    children = children[:1]
+
+                # TODO: handle this
+                # if model == "choice":
+                # children = children[:1]
 
             elif isinstance(children, (XsdUnion)):
-                children = [children.member_types[0]]
+                children = children.member_types
+                # children = [children.member_types[0]]
             elif isinstance(children, (XsdList, XsdAtomic, XsdUnion)):
 
                 children = [children]
@@ -344,6 +370,13 @@ class ElementNode(BaseNode):
         data = {}
 
         with root.visit() as children:
+            if (
+                root.is_composed()
+                and isinstance(root.node.type.content, XsdGroup)
+                and root.node.type.content.model == "choice"
+            ):
+                children = [faker.random_element(children)]
+
             for child in children:
                 child = child._unwrap()
                 value = child.example()
@@ -364,6 +397,9 @@ class ElementNode(BaseNode):
                     value = value["$"]
 
                 data["@" + attr.name] = value
+
+            # if attr.local_name == "nilReason":
+            # data["@" + attr.name] = "missing"
 
         local_name = root.node.local_name
         if local_name in utils.codelist_names():
@@ -401,3 +437,7 @@ class ListNode(BaseNode):
 
     def is_multiple(self):
         return True
+
+    def example(self):
+        component = AtomicNode(self.node.base_type)
+        return [component.example() for _ in range(faker.random_digit())]
