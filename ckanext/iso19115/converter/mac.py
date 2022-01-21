@@ -8,15 +8,5 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class MD_Format:
-    ...
-
-
-@dataclass
-class MD_StandardOrderProcess:
-    ...
-
-
-@dataclass
-class MD_Distribution:
+class MI_AcquisitionInformation:
     ...

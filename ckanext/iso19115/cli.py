@@ -52,16 +52,22 @@ def build_xml(source):
 @build.command("describe")
 @click.option("-r", "--root", default="mdb:MD_Metadata")
 @click.option("-s", "--skip-optional", is_flag=True)
+@click.option("-d", "--max-depth", type=int, default=0)
 @click.option("-q", "--qualified", is_flag=True)
-@click.option("-d", "--depth", type=int, default=0)
+@click.option("-v", "--annotated", is_flag=True)
 @click.option(
     "-f", "--format", type=click.Choice(["overview"]), default="overview"
 )
 def build_describe(
-    root: str, skip_optional: bool, format: str, qualified: bool, depth: int
+    root: str,
+    skip_optional: bool,
+    format: str,
+    qualified: bool,
+    max_depth: int,
+    annotated: bool,
 ):
     b = utils.get_builder(root)
-    b.print_tree(format, skip_optional, qualified, depth)
+    b.print_tree(format, skip_optional, qualified, max_depth, annotated)
 
 
 @build.command("example")
@@ -70,12 +76,19 @@ def build_describe(
     "-f", "--format", type=click.Choice(["json", "xml"]), default="json"
 )
 @click.option(
-    "-s",
     "--seed",
 )
-def build_example(root: str, format: str, seed: Optional[str]):
+@click.option("-s", "--skip-optional", is_flag=True)
+@click.option("-d", "--max-depth", type=int, default=0)
+def build_example(
+    root: str,
+    format: str,
+    seed: Optional[str],
+    skip_optional: bool,
+    max_depth: int,
+):
     b = utils.get_builder(root)
-    example = b.example(format, seed=seed)
+    example = b.example(format, seed, skip_optional, max_depth)
     click.echo(example)
 
 

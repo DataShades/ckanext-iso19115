@@ -3,7 +3,10 @@
   xmlns:cit="http://standards.iso.org/iso/19115/-3/cit/1.0" xmlns:dqc="http://standards.iso.org/iso/19157/-2/dqc/1.0"
   xmlns:lan="http://standards.iso.org/iso/19115/-3/lan/1.0" xmlns:mcc="http://standards.iso.org/iso/19115/-3/mcc/1.0"
   xmlns:mdb="http://standards.iso.org/iso/19115/-3/mdb/2.0" xmlns:mri="http://standards.iso.org/iso/19115/-3/mri/1.0"
+
   elementFormDefault="qualified" targetNamespace="http://standards.iso.org/iso/19115/-3/mdb/2.0"
+
+
   version="1.0">
   <annotation>
     <documentation>Wrapper namespace to support Catalog Service implementations</documentation>
@@ -19,4 +22,5 @@
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <import namespace="http://standards.iso.org/iso/19115/-3/mds/2.0" schemaLocation="../../../../19115/-3/mds/2.0/mds.xsd"/>
   <import namespace="http://standards.iso.org/iso/19115/-3/mex/1.0" schemaLocation="../../../../19115/-3/mex/1.0/mex.xsd"/>
+
 </schema>

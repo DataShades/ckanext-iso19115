@@ -3,6 +3,9 @@ from __future__ import annotations
 import datetime
 import enum
 from dataclasses import dataclass
+from typing import Optional
+
+from .helpers import Atomic
 
 
 class DateFormat(enum.Enum):
@@ -21,21 +24,18 @@ class DateFormat(enum.Enum):
 
 
 @dataclass
-class DateTime:
-    value: datetime.datetime
-    format: DateFormat = DateFormat.datetime
-
-    def as_bf(self):
-        return {"$": self.format.from_datetime(self.value)}
+class DateTime(Atomic):
+    format = DateFormat.datetime.from_datetime
 
 
 @dataclass
-class Date:
-    value: datetime.date
-    format: DateFormat = DateFormat.date
+class Date(Atomic):
+    format = DateFormat.date.from_datetime
 
-    def as_bf(self):
-        return {"$": self.format.from_datetime(self.value)}
+
+@dataclass
+class CharacterString(Atomic):
+    pass
 
 
 @dataclass

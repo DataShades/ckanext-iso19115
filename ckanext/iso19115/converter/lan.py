@@ -1,18 +1,31 @@
 from __future__ import annotations
 
-import datetime
-import enum
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
-from ckanext.iso19115.converter import bf, make
+from .helpers import Codelist
 
 if TYPE_CHECKING:
-    from .. import types
+    from ..types import *
+
+
+@dataclass
+class LanguageCode(Codelist):
+    pass
+
+
+@dataclass
+class CountryCode(Codelist):
+    pass
+
+
+@dataclass
+class MD_CharacterSetCode(Codelist):
+    pass
 
 
 @dataclass
 class PT_Locale:
-    language: str  # codelist("LanguageCode")
-    country: Optional[str] = None  # codelist("CountryCode")
-    characterEncoding: Optional[str] = None  # codelist("MD_CharacterSetCode")
+    language: Codelist[lan.LanguageCode]
+    country: Optional[Codelist[lan.CountryCode]] = None
+    characterEncoding: Optional[Codelist[lan.MD_CharacterSetCode]] = "UTF-8"

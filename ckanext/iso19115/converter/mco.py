@@ -3,26 +3,31 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
+from ckanext.iso19115.converter.helpers import Codelist
+
 if TYPE_CHECKING:
-    from .. import types
+    from ..types import *
 
 
 @dataclass
 class MD_Constraints:
     useLimitation: list[str] = field(default_factory=list)
-    constraintApplicationScope: Optional[types.mcc.MD_Scope] = None
-    graphic: list[types.mcc.MD_BrowseGraphic] = field(default_factory=list)
-    reference: list[types.cit.CI_Citation] = field(default_factory=list)
+    constraintApplicationScope: Optional[mcc.MD_Scope] = None
+    graphic: list[mcc.MD_BrowseGraphic] = field(default_factory=list)
+    reference: list[cit.CI_Citation] = field(default_factory=list)
     releasability: Optional[MD_Releasability] = None
-    responsibleParty: list[types.cit.CI_Responsibility] = field(
-        default_factory=list
-    )
+    responsibleParty: list[cit.CI_Responsibility] = field(default_factory=list)
+
+
+@dataclass
+class MD_RestrictionCode(Codelist):
+    pass
 
 
 @dataclass
 class MD_Releasability:
-    addressee: list[types.cit.CI_Responsibility] = field(default_factory=list)
+    addressee: list[cit.CI_Responsibility] = field(default_factory=list)
     statement: Optional[str] = None
-    disseminationConstraints: list[str] = field(
+    disseminationConstraints: list[Codelist[mco.MD_RestrictionCode]] = field(
         default_factory=list
-    )  # codelist("MD_RestrictionCode")
+    )

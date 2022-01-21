@@ -93,11 +93,12 @@ def lookup(root: str, schema: xmlschema.XMLSchema):
         pass
 
     el = None
+
     if root in schema.maps.elements:
         el = schema.maps.elements[root]
     else:
         for component in schema.maps.iter_components():
-            if not isinstance(component, xmlschema.XsdElement):
+            if not hasattr(component, "qualified_name"):
                 continue
             if component.qualified_name == qualified_root:
                 el = component
@@ -129,8 +130,13 @@ def validate_schema(
 ):
     schema = _get_schema(name)
     try:
-        # from icecream import ic
-        # ic(schema.decode(BytesIO(content), converter=xmlschema.BadgerFishConverter))
+        from icecream import ic
+
+        ic(
+            schema.decode(
+                BytesIO(content), converter=xmlschema.JsonMLConverter
+            )
+        )
 
         schema.validate(
             BytesIO(content),

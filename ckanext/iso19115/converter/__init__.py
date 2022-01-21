@@ -1,50 +1,100 @@
 from __future__ import annotations
 
-import dataclasses
-from typing import Any
+import contextlib
+from typing import TYPE_CHECKING, Any
 
-from werkzeug.utils import import_string
+import ckan.plugins.toolkit as tk
 
+from . import helpers as h
 
-def _get(el) -> Any:
-    return import_string(".".join([__package__, el]))
-
-
-def make(el, *args, **kwargs):
-    return _get(el)(*args, **kwargs)
+if TYPE_CHECKING:
+    import ckanext.iso19115.types as t
 
 
-def bf(el: Any, as_child: bool = True):
-    if dataclasses.is_dataclass(el):
-        return _bf(el, as_child)
+class Converter:
+    data: t.mdb.MD_Metadata
+    pkg: dict[str, Any]
 
-    result = [_bf(el, as_child) for el in el]
-    return result or {}
+    def __init__(self, data_dict: dict[str, Any]):
+        pass
 
+    def initialize(self, pkg_dict):
+        self.data = h.make("mdb:MD_Metadata")
+        self.pkg = pkg_dict
 
-def _bf(el: Any, as_child: bool):
-    data = el.as_bf()
-    name = type(el).__name__
-    ns = el.__module__.split(".")[-1]
-    if as_child:
-        data = {f"{ns}:{name}": data}
-    return data
+    def process(self):
+        self._add_default_locale()
+        self._add_dates()
+        self._add_contacts()
+        self._add_identification()
 
+    def finalize(self):
+        ...
 
-def codelist(name: str, value: str) -> dict[str, str]:
-    from ..utils import codelist_options
+    def build(self):
+        result = h.jml(self.data)
+        return result
 
-    options = codelist_options(name)
-    for option in options:
-        if option.name == value:
-            break
-    else:
-        raise ValueError(
-            f"Codelist [name] does not contain value {value}:"
-            f" {[o.name for o in options]}"
+    def _add_default_locale(self):
+        locale = h.locale(tk.config.get("ckan.locale_default"))
+        self.data.set_locale(locale)
+
+    def _add_dates(self):
+        creation = self.pkg["metadata_created"]
+        self.data.add_dateInfo(h.date(creation, "creation"))
+
+        revision = self.pkg["metadata_modified"]
+        if revision != creation:
+            self.data.add_dateInfo(h.date(revision, "revision"))
+
+    def _add_contacts(self):
+        org = self.pkg["organization"]
+        if org:
+            contact = h.responsibility(
+                "owner",
+                self.pkg["organization"]["title"],
+                logo=h.image(org["image_url"]),
+            )
+            self.data.add_contact(contact)
+
+        author_contact = self._make_user_contact(
+            "author", self.pkg["creator_user_id"]
         )
-    return {
-        "$": value,
-        "@codeList": option.location,
-        "@codeListValue": value,
-    }
+        if author_contact:
+            self.data.add_contact(author_contact)
+
+    def _add_identification(self):
+        cit = h.citation(self.pkg["title"])
+        poc = self._make_user_contact("author", self.pkg["creator_user_id"])
+        kw = [h.keyword(t) for t in self.pkg["tags"]]
+
+        resources = []
+        for res in self.pkg["resources"]:
+            r_name = (
+                h.citation(res["name"], presentationForm="documentDigital")
+                if res["name"]
+                else None
+            )
+            resources.append(
+                h.make(
+                    "mri:MD_AssociatedResource",
+                    r_name,
+                    "isComposedOf",
+                )
+            )
+
+        ident: t.mri.MD_DataIdentification = h.make(
+            "mri:MD_DataIdentification",
+            cit,
+            self.pkg["notes"],
+            pointOfContact=poc,
+            descriptiveKeywords=kw,
+            associatedResource=resources,
+        )
+
+        self.data.add_identificationInfo(ident)
+
+    def _make_user_contact(self, role: str, user_id: str):
+        with contextlib.suppress(tk.NotAuthorized):
+            author = tk.get_action("user_show")({}, {"id": user_id})
+            return h.responsibility(role, author["fullname"] or author["name"])

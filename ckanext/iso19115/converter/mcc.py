@@ -3,16 +3,21 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
-from . import bf
+from ckanext.iso19115.converter.helpers import Codelist
 
 if TYPE_CHECKING:
-    from .. import types
+    from ..types import *
+
+
+@dataclass
+class URI:
+    ...
 
 
 @dataclass
 class MD_Identifier:
     code: str
-    authority: Optional[types.cit.CI_Citation] = None
+    authority: Optional[cit.CI_Citation] = None
     codeSpace: Optional[str] = None
     version: Optional[str] = None
     description: Optional[str] = None
@@ -20,19 +25,26 @@ class MD_Identifier:
 
 @dataclass
 class MD_BrowseGraphic:
-    fileName: str
-    fileDescription: Optional[str] = None
-    fileType: Optional[str] = None
-    imageConstraints: list[types.mco.MD_Constraints] = field(
+    fileName: gco.CharacterString
+    fileDescription: Optional[gco.CharacterString] = None
+    fileType: Optional[gco.CharacterString] = None
+    imageConstraints: Optional[list[mco.MD_Constraints]] = field(
         default_factory=list
     )
-    linkage: list[types.cit.CI_OnlineResource] = field(default_factory=list)
+    linkage: Optional[list[cit.CI_OnlineResource]] = field(
+        default_factory=list
+    )
+
+
+@dataclass
+class MD_ScopeCode(Codelist):
+    pass
 
 
 @dataclass
 class MD_Scope:
-    level: str  # codelist("MD_ScopeCode")
-    # extent: list[types.gex.EX_Extent] = field(default_factory=list)
+    level: Codelist[mcc.MD_ScopeCode]
+    # extent: list[gex.EX_Extent] = field(default_factory=list)
     levelDescription: list[MD_ScopeDescription] = field(default_factory=list)
 
 
@@ -47,58 +59,75 @@ class MD_ScopeDescription:
 
 
 @dataclass
+class MD_SpatialRepresentationTypeCode(Codelist):
+    pass
+
+
+@dataclass
+class MD_TopicCategoryCode(Codelist):
+    pass
+
+
+@dataclass
 class Abstract_ResourceDescription:
-    citation: types.cit.CI_Citation
-    abstract: str
-    purpose: Optional[str] = None
-    credit: list[str] = field(default_factory=list)
-    status: list[str] = field(
+    citation: cit.CI_Citation
+    abstract: gco.CharacterString
+    purpose: Optional[gco.CharacterString] = None
+    credit: Optional[list[gco.CharacterString]] = field(default_factory=list)
+    status: Optional[list[str]] = field(
         default_factory=list
     )  # codelit("MD_ProgressCode")
-    pointOfContact: list[types.cit.CI_Responsibility] = field(
+    pointOfContact: Optional[list[cit.CI_Responsibility]] = field(
         default_factory=list
     )
-    spatialRepresentationType: list[str] = field(
-        default_factory=list
-    )  # codelist("MD_SpatialRepresentationTypeCode")
-    spatialResolution: list[types.mri.MD_Resolution] = field(
-        default_factory=list
-    )
-    temporalResolution: list[types.gco.TM_PeriodDuration] = field(
+    spatialRepresentationType: Optional[
+        list[Codelist[mcc.MD_SpatialRepresentationTypeCode]]
+    ] = field(default_factory=list)
+    spatialResolution: Optional[list[mri.MD_Resolution]] = field(
         default_factory=list
     )
-    topicCategory: list[str] = field(
-        default_factory=list
-    )  # codelist("MD_TopicCategoryCode")
-    extent: list[types.gex.EX_Extent] = field(default_factory=list)
-    additionalDocumentation: list[types.cit.CI_Citation] = field(
+    temporalResolution: Optional[list[gco.TM_PeriodDuration]] = field(
         default_factory=list
     )
-    processingLevel: Optional[types.mcc.MD_Identifier] = None
-    resourceMaintenance: list[types.mmi.MD_MaintenanceInformation] = field(
+    topicCategory: Optional[list[Codelist[mcc.MD_TopicCategoryCode]]] = field(
         default_factory=list
     )
-    graphicOverview: list[types.mcc.MD_BrowseGraphic] = field(
+    extent: Optional[list[gex.EX_Extent]] = field(default_factory=list)
+    additionalDocumentation: list[cit.CI_Citation] = field(
         default_factory=list
     )
-    resourceFormat: list[types.mrd.MD_Format] = field(default_factory=list)
-    descriptiveKeywords: list[types.mri.MD_Keywords] = field(
+    processingLevel: Optional[mcc.MD_Identifier] = None
+    resourceMaintenance: Optional[list[mmi.MD_MaintenanceInformation]] = field(
         default_factory=list
     )
-    resourceSpecificUsage: list[types.mri.MD_Usage] = field(
+    graphicOverview: Optional[list[mcc.MD_BrowseGraphic]] = field(
         default_factory=list
     )
-    resourceConstraints: list[types.mco.MD_Constraints] = field(
+    resourceFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
+    descriptiveKeywords: Optional[list[mri.MD_Keywords]] = field(
         default_factory=list
     )
-    associatedResource: list[types.mri.MD_AssociatedResource] = field(
+    resourceSpecificUsage: Optional[list[mri.MD_Usage]] = field(
+        default_factory=list
+    )
+    resourceConstraints: Optional[list[mco.MD_Constraints]] = field(
+        default_factory=list
+    )
+    associatedResource: Optional[list[mri.MD_AssociatedResource]] = field(
         default_factory=list
     )
 
-    def as_bf(self):
-        return {
-            "mri:citation": bf(self.citation),
-            "mri:abstract": {
-                "gco:CharacterString": {"$": "Line stop pretty."}
-            },
-        }
+
+@dataclass
+class Abstract_SpatialRepresentation:
+    ...
+    # |msr:MD_GridSpatialRepresentation [id, uuid] (too deep...)
+    # |msr:MD_VectorSpatialRepresentation [id, uuid] (too deep...)
+
+
+@dataclass
+class Abstract_ContentInformation:
+    ...
+    # |mrc:MD_FeatureCatalogueDescription [id, uuid] (too deep...)
+    # |mrc:MD_CoverageDescription [id, uuid] (too deep...)
+    # |mrc:MD_FeatureCatalogue [id, uuid] (too deep...)
