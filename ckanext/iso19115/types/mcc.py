@@ -13,9 +13,11 @@ if TYPE_CHECKING:
 class URI:
     ...
 
+
 @dataclass
 class MD_ProgressCode(Codelist):
     pass
+
 
 @dataclass
 class MD_Identifier:

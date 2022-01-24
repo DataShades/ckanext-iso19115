@@ -17,17 +17,17 @@ class TestConverter:
         el: t.mdb.MD_Metadata = h.make("mdb:MD_Metadata")
         dt1 = faker.date_time()
         el.add_dateInfo(h.date(dt1, "creation"))
-        data = h.jml(el)
+        data = c.jml(el)
         builder = u.get_builder("mdb:MD_Metadata")
         assert builder.build(data)
 
     def test_with_party(self, faker):
         el: t.mdb.MD_Metadata = h.make("mdb:MD_Metadata")
         el.add_dateInfo(h.date(faker.date_time().date(), "creation"))
-        el.add_contact(h.responsibility("author", "author"))
+        el.add_contact(h.responsibility("author", t.cit.CI_Individual(h.cs("author"))))
 
         builder = u.get_builder("mdb:MD_Metadata")
-        data = h.jml(el)
+        data = c.jml(el)
         builder.build(data)
 
     def test_with_identification(self, faker):
@@ -42,5 +42,5 @@ class TestConverter:
         )
 
         builder = u.get_builder("mdb:MD_Metadata")
-        data = h.jml(el)
+        data = c.jml(el)
         builder.build(data)

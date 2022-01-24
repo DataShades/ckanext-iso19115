@@ -8,16 +8,25 @@ from .base import Codelist
 if TYPE_CHECKING:
     from . import *
 
+
 @dataclass
 class MD_MediumFormatCode(Codelist):
     pass
 
+
 @dataclass
 class MD_Distributor:
     distributorContact: cit.CI_Responsibility
-    distributionOrderProcess: Optional[list[mrd.MD_StandardOrderProcess]] = field(default_factory=list)
-    distributorFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
-    distributorTransferOptions: Optional[list[mrd.MD_DigitalTransferOptions]] = field(default_factory=list)
+    distributionOrderProcess: Optional[
+        list[mrd.MD_StandardOrderProcess]
+    ] = field(default_factory=list)
+    distributorFormat: Optional[list[mrd.MD_Format]] = field(
+        default_factory=list
+    )
+    distributorTransferOptions: Optional[
+        list[mrd.MD_DigitalTransferOptions]
+    ] = field(default_factory=list)
+
 
 @dataclass
 class MD_DigitalTransferOptions:
@@ -26,7 +35,9 @@ class MD_DigitalTransferOptions:
     onLine: Optional[list[cit.CI_OnlineResource]] = field(default_factory=list)
     offLine: Optional[list[mrd.MD_Medium]] = field(default_factory=list)
     transferFrequency: Optional[gco.TM_PeriodDuration] = None
-    distributionFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
+    distributionFormat: Optional[list[mrd.MD_Format]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -35,7 +46,9 @@ class MD_Medium:
     density: Optional[gco.Real] = None
     densityUnits: Optional[gco.CharacterString] = None
     volumes: Optional[gco.Integer] = None
-    mediumFormat: Optional[list[Codelist[mrd.MD_MediumFormatCode]]] = field(default_factory=list)
+    mediumFormat: Optional[list[Codelist[mrd.MD_MediumFormatCode]]] = field(
+        default_factory=list
+    )
     mediumNote: Optional[gco.CharacterString] = None
     identifier: Optional[mcc.MD_Identifier] = None
 
@@ -46,7 +59,9 @@ class MD_Format:
     amendmentNumber: Optional[gco.CharacterString] = None
     fileDecompressionTechnique: Optional[gco.CharacterString] = None
     medium: Optional[list[mrd.MD_Medium]] = field(default_factory=list)
-    formatDistributor: Optional[list[mrd.MD_Distributor]] = field(default_factory=list)
+    formatDistributor: Optional[list[mrd.MD_Distributor]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -62,6 +77,12 @@ class MD_StandardOrderProcess:
 @dataclass
 class MD_Distribution:
     description: Optional[gco.CharacterString] = None
-    distributionFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
-    distributor: Optional[list[mrd.MD_Distributor]] = field(default_factory=list)
-    transferOptions: Optional[list[mrd.MD_DigitalTransferOptions]] = field(default_factory=list)
+    distributionFormat: Optional[list[mrd.MD_Format]] = field(
+        default_factory=list
+    )
+    distributor: Optional[list[mrd.MD_Distributor]] = field(
+        default_factory=list
+    )
+    transferOptions: Optional[list[mrd.MD_DigitalTransferOptions]] = field(
+        default_factory=list
+    )

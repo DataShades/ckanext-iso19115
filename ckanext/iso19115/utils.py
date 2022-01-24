@@ -125,13 +125,13 @@ def validate_schema(
 ):
     schema = _get_schema(name)
     try:
-        from icecream import ic
+        # from icecream import ic
 
-        ic(
-            schema.decode(
-                BytesIO(content), converter=xmlschema.JsonMLConverter
-            )
-        )
+        # ic(
+        #     schema.decode(
+        #         BytesIO(content), converter=xmlschema.JsonMLConverter
+        #     )
+        # )
 
         schema.validate(
             BytesIO(content),

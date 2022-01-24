@@ -42,7 +42,7 @@ class MD_Metadata:
         default_factory=list
     )
     spatialRepresentationInfo: Optional[
-        list[mcc.Abstract_ResourceDescription]
+        list[mcc.Abstract_SpatialRepresentation]
     ] = field(default_factory=list)
     referenceSystemInfo: Optional[list[mrs.MD_ReferenceSystem]] = field(
         default_factory=list

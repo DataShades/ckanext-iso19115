@@ -44,13 +44,16 @@ class CharacterString(Atomic):
 class Real(Atomic):
     value: float
 
+
 @dataclass
 class Measure(Atomic):
     value: float
 
+
 @dataclass
 class Integer(Atomic):
     value: int
+
 
 @dataclass
 class Boolean(Atomic):
@@ -66,13 +69,16 @@ class TM_PeriodDuration:
 class Record:
     value: Any
 
+
 @dataclass
 class RecordType:
     ...
 
+
 @dataclass
 class MemberName:
     ...
+
 
 @dataclass
 class ScopedName:

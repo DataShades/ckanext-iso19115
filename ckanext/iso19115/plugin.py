@@ -10,7 +10,6 @@ from . import cli, interfaces, views
 from .logic import action
 
 
-
 class Iso19115Plugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.IClick)
@@ -37,10 +36,10 @@ class Iso19115Plugin(plugins.SingletonPlugin):
     def update_config(self, config):
         tk.add_template_directory(config, "templates")
 
-
     # IMetaexport
     def register_metaexport_format(self):
         from . import formatter
+
         return dict(iso19115=formatter.Iso19115())
 
     def register_data_extractors(self, formatters):

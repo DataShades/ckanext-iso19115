@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from . import *
 
+
 @dataclass
 class MD_ApplicationSchemaInformation:
     name: cit.CI_Citation

@@ -381,7 +381,9 @@ class AbstractCRS:
 
 @dataclass
 class UnitDefinition:
-    metaDataProperty: Optional[list[GenericMetaData]] = field(default_factory=list)
+    metaDataProperty: Optional[list[GenericMetaData]] = field(
+        default_factory=list
+    )
     description: Optional[str] = None
     descriptionReference: Optional[Any] = None
     identifier: Any = None

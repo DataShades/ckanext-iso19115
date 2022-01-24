@@ -16,9 +16,17 @@ class MD_MaintenanceFrequencyCode(Codelist):
 
 @dataclass
 class MD_MaintenanceInformation:
-    maintenanceAndUpdateFrequency: Optional[Codelist[mmi.MD_MaintenanceFrequencyCode]] = None
+    maintenanceAndUpdateFrequency: Optional[
+        Codelist[mmi.MD_MaintenanceFrequencyCode]
+    ] = None
     maintenanceDate: Optional[list[cit.CI_Date]] = field(default_factory=list)
     userDefinedMaintenanceFrequency: Optional[gco.TM_PeriodDuration] = None
-    maintenanceScope: Optional[list[mcc.MD_Scope]] = field(default_factory=list)
-    maintenanceNote: Optional[list[gco.CharacterString]] = field(default_factory=list)
-    contact: Optional[list[cit.CI_Responsibility]] = field(default_factory=list)
+    maintenanceScope: Optional[list[mcc.MD_Scope]] = field(
+        default_factory=list
+    )
+    maintenanceNote: Optional[list[gco.CharacterString]] = field(
+        default_factory=list
+    )
+    contact: Optional[list[cit.CI_Responsibility]] = field(
+        default_factory=list
+    )

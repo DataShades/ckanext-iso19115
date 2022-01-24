@@ -4,21 +4,26 @@ from typing import TYPE_CHECKING, Optional
 
 from .base import Codelist
 
-from . import gco
+from . import gco, mcc
+
 if TYPE_CHECKING:
     from . import *
+
 
 @dataclass
 class MD_CellGeometryCode(Codelist):
     pass
 
+
 @dataclass
 class MD_TopologyLevelCode(Codelist):
     pass
 
+
 @dataclass
 class MD_DimensionNameTypeCode(Codelist):
     pass
+
 
 @dataclass
 class MD_GeometricObjectTypeCode(Codelist):
@@ -41,15 +46,20 @@ class MD_GeometricObjects:
 
 
 @dataclass
-class MD_GridSpatialRepresentation:
+class MD_GridSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
     scope: Optional[mcc.MD_Scope] = None
     numberOfDimensions: gco.Integer = gco.Integer(0)
-    axisDimensionProperties: Optional[list[msr.MD_Dimension]] = field(default_factory=list)
+    axisDimensionProperties: Optional[list[msr.MD_Dimension]] = field(
+        default_factory=list
+    )
     cellGeometry: Codelist[msr.MD_CellGeometryCode] = None
     transformationParameterAvailability: gco.Boolean = gco.Boolean(False)
 
+
 @dataclass
-class MD_VectorSpatialRepresentation:
+class MD_VectorSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
     scope: Optional[mcc.MD_Scope] = None
     topologyLevel: Optional[Codelist[MD_TopologyLevelCode]] = None
-    geometricObjects: Optional[list[MD_GeometricObjects]] = field(default_factory=list)
+    geometricObjects: Optional[list[MD_GeometricObjects]] = field(
+        default_factory=list
+    )

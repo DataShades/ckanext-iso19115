@@ -63,11 +63,15 @@ class Converter:
         return result
 
     def _add_identifier(self):
-        identifier: mcc.MD_Identifier = h.id(self.pkg["id"], codeSpace="urn:uuid")
+        identifier: mcc.MD_Identifier = h.id(
+            self.pkg["id"], codeSpace="urn:uuid"
+        )
         self.data.metadataIdentifier = identifier
 
     def _add_default_locale(self):
-        locale = h.locale(self.pkg.get("language") or tk.config.get("ckan.locale_default"))
+        locale = h.locale(
+            self.pkg.get("language") or tk.config.get("ckan.locale_default")
+        )
         self.data.set_locale(locale)
 
     def _add_parent(self):
@@ -75,7 +79,9 @@ class Converter:
         pass
 
     def _add_scope(self):
-        scope: mdb.MD_MetadataScope = mdb.MD_MetadataScope(mcc.MD_ScopeCode('dataset'), h.cs('Dataset'))
+        scope: mdb.MD_MetadataScope = mdb.MD_MetadataScope(
+            mcc.MD_ScopeCode("dataset"), h.cs("Dataset")
+        )
         self.data.metadataScope.append(scope)
 
     def _add_contacts(self):
@@ -83,7 +89,10 @@ class Converter:
         if org:
             contact = h.responsibility(
                 "pointOfContact",
-                h.org(self.pkg["organization"]["title"], logo=h.image(org["image_url"]))
+                h.org(
+                    self.pkg["organization"]["title"],
+                    logo=h.image(org["image_url"]),
+                ),
             )
             self.data.add_contact(contact)
 
@@ -134,7 +143,9 @@ class Converter:
         pass
 
     def _add_identification(self):
-        cit: cit.CI_Citation = h.citation(self.pkg["title"], identifier=h.id(self.pkg["id"]))
+        cit: cit.CI_Citation = h.citation(
+            self.pkg["title"], identifier=h.id(self.pkg["id"])
+        )
         poc = self._make_user_contact("author", self.pkg["creator_user_id"])
         kw = [h.keyword(t) for t in self.pkg["tags"]]
 
@@ -202,11 +213,13 @@ class Converter:
         acq: mac.MI_AcquisitionInformation
         pass
 
-
     def _make_user_contact(self, role: str, user_id: str):
         with contextlib.suppress(tk.NotAuthorized):
             author = tk.get_action("user_show")({}, {"id": user_id})
-            return h.responsibility(role, h.individual(author["fullname"] or author["name"]))
+            return h.responsibility(
+                role, h.individual(author["fullname"] or author["name"])
+            )
+
 
 def _default_as_jml(el: DataClass, ns: str):
     data = JmlRecord(f"{ns}:{el.__class__.__name__}")

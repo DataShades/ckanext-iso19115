@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional
@@ -6,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from .base import Codelist
 
 from . import gco
+
 if TYPE_CHECKING:
     from . import *
 
@@ -14,11 +14,13 @@ if TYPE_CHECKING:
 class MD_CoverageContentTypeCode(Codelist):
     pass
 
+
 @dataclass
 class MD_RangeDimension:
     sequenceIdentifier: Optional[gco.MemberName] = None
     description: Optional[gco.CharacterString] = None
     name: Optional[list[mcc.MD_Identifier]] = field(default_factory=list)
+
 
 @dataclass
 class MD_FeatureTypeInfo:
@@ -28,22 +30,35 @@ class MD_FeatureTypeInfo:
 
 @dataclass
 class MD_AttributeGroup:
-    contentType: list[Codelist[mrc.MD_CoverageContentTypeCode]] = field(default_factory=list)
-    attribute: Optional[list[mrc.MD_RangeDimension]] = field(default_factory=list)
+    contentType: list[Codelist[mrc.MD_CoverageContentTypeCode]] = field(
+        default_factory=list
+    )
+    attribute: Optional[list[mrc.MD_RangeDimension]] = field(
+        default_factory=list
+    )
+
 
 @dataclass
 class MD_FeatureCatalogueDescription:
     complianceCode: Optional[gco.Boolean] = None
     locale: Optional[list[lan.PT_Locale]] = field(default_factory=list)
     includedWithDataset: Optional[gco.Boolean] = None
-    featureTypes: Optional[list[mrc.MD_FeatureTypeInfo]] = field(default_factory=list)
-    featureCatalogueCitation: Optional[list[cit.CI_Citation]] = field(default_factory=list)
+    featureTypes: Optional[list[mrc.MD_FeatureTypeInfo]] = field(
+        default_factory=list
+    )
+    featureCatalogueCitation: Optional[list[cit.CI_Citation]] = field(
+        default_factory=list
+    )
+
 
 @dataclass
 class MD_CoverageDescription:
     attributeDescription: gco.RecordType = None
     processingLevelCode: Optional[mcc.MD_Identifier] = None
-    attributeGroup: Optional[list[mrc.MD_AttributeGroup]] = field(default_factory=list)
+    attributeGroup: Optional[list[mrc.MD_AttributeGroup]] = field(
+        default_factory=list
+    )
+
 
 @dataclass
 class MD_FeatureCatalogue:

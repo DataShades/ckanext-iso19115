@@ -4,10 +4,10 @@ from dataclasses import Field, dataclass, field
 from typing import Optional
 from .base import Atomic
 
+
 @dataclass
 class FileName(Atomic):
     value: str
-
 
 
 @dataclass

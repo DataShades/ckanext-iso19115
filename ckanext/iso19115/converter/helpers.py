@@ -11,11 +11,14 @@ from werkzeug.utils import import_string
 from ..types import *
 from ..types.base import Codelist
 
+
 def make(el: str, *args, **kwargs):
     return _get(el)(*args, **kwargs)
 
+
 def _get(el) -> Any:
     return import_string(".".join(["ckanext.iso19115.types", el]))
+
 
 def cs(v: Any) -> gco.CharacterString:
     return gco.CharacterString(v)
@@ -24,7 +27,9 @@ def cs(v: Any) -> gco.CharacterString:
 def image(url: str) -> mcc.MD_BrowseGraphic:
     name, ext = os.path.splitext(os.path.basename(url))
     links = [link(url)]
-    return mcc.MD_BrowseGraphic(cs(name), fileType=cs(ext) if ext else None, linkage=links)
+    return mcc.MD_BrowseGraphic(
+        cs(name), fileType=cs(ext) if ext else None, linkage=links
+    )
 
 
 def link(url: str) -> cit.CI_OnlineResource:
@@ -35,8 +40,14 @@ def link(url: str) -> cit.CI_OnlineResource:
 def date(dt: Union[str, datetime.date], type: str) -> cit.CI_Date:
     if isinstance(dt, str):
         dt = datetime.datetime.fromisoformat(dt)
-
     assert isinstance(dt, datetime.date)
+
+    if isinstance(dt, datetime.datetime) and (
+        dt.hour,
+        dt.minute,
+        dt.second,
+    ) == (0, 0, 0):
+        dt = dt.date()
 
     if isinstance(dt, datetime.datetime):
         v = gco.DateTime(dt)
@@ -58,10 +69,14 @@ def codelist(field: dataclasses.Field, value: Any) -> Codelist:
 def individual(name: str, **kwargs) -> cit.CI_Individual:
     return cit.CI_Individual(cs(name), **kwargs)
 
+
 def org(name: str, **kwargs) -> cit.CI_Organisation:
     return cit.CI_Organisation(cs(name), **kwargs)
 
-def responsibility(role: str,  party: cit.AbstractCI_Party) -> cit.CI_Responsibility:
+
+def responsibility(
+    role: str, party: cit.AbstractCI_Party
+) -> cit.CI_Responsibility:
     return cit.CI_Responsibility(cit.CI_RoleCode(role), party=[party])
 
 
@@ -84,9 +99,21 @@ def id(id_: str, **kwargs) -> mcc.MD_Identifier:
 def contact(**kwargs) -> cit.CI_Contact:
     return cit.CI_Contact(**kwargs)
 
+
 def phone(number: str, type_: Optional[str] = None) -> cit.CI_Telephone:
-    return cit.CI_Telephone(cs(number), cit.CI_TelephoneTypeCode(type_) if type_ else None)
+    return cit.CI_Telephone(
+        cs(number), cit.CI_TelephoneTypeCode(type_) if type_ else None
+    )
 
 
-def address(deliveryPoint=None, city=None, administrativeArea=None, postalCode=None, country=None, email=None) -> cit.CI_Address:
-    return cit.CI_Address(deliveryPoint, city, administrativeArea, postalCode, country, email)
+def address(
+    deliveryPoint=None,
+    city=None,
+    administrativeArea=None,
+    postalCode=None,
+    country=None,
+    email=None,
+) -> cit.CI_Address:
+    return cit.CI_Address(
+        deliveryPoint, city, administrativeArea, postalCode, country, email
+    )

@@ -8,6 +8,7 @@ from .base import Codelist
 if TYPE_CHECKING:
     from . import *
 
+
 @dataclass
 class CI_DateTypeCode(Codelist):
     pass
@@ -42,7 +43,9 @@ class CI_Address:
     administrativeArea: Optional[gco.CharacterString] = None
     postalCode: Optional[gco.CharacterString] = None
     country: Optional[gco.CharacterString] = None
-    electronicMailAddress: list[gco.CharacterString] = field(default_factory=list)
+    electronicMailAddress: list[gco.CharacterString] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -88,7 +91,6 @@ class CI_Series:
     name: Optional[str] = None
     issueIdentification: Optional[str] = None
     page: Optional[str] = None
-
 
 
 @dataclass

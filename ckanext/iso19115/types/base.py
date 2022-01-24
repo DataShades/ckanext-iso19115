@@ -9,10 +9,12 @@ T = TypeVar("T")
 def _id(v: T) -> T:
     return v
 
+
 class CodeListValue(NamedTuple):
     name: str
     definition: str
     location: str = ""
+
 
 @dataclass
 class Atomic:
@@ -39,6 +41,7 @@ class Codelist(Generic[T]):
     @classmethod
     def _into_clv(cls, value: str):
         from ..utils import codelist_options
+
         ns, name = cls._qualify()
         options = codelist_options(name)
         if not options:
@@ -51,7 +54,6 @@ class Codelist(Generic[T]):
             f"Codelist {ns}:[name] does not contain value {value}:"
             f" {[o.name for o in options]}"
         )
-
 
     def as_jml(self):
 
@@ -69,6 +71,7 @@ class Codelist(Generic[T]):
         data.append(option.name)
 
         return data
+
 
 class JmlRecord(list):
     def __init__(self, name: str, initial_attrs: Iterable[Any] = ()):
