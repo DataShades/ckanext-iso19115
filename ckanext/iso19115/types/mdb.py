@@ -3,10 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional, Union
 
-from .helpers import Codelist
+from .base import Codelist
 
 if TYPE_CHECKING:
-    from ..types import *
+    from . import *
 
 
 @dataclass
@@ -26,9 +26,6 @@ class MD_Metadata:
 
     contact: list[cit.CI_Responsibility] = field(default_factory=list)
     dateInfo: list[cit.CI_Date] = field(default_factory=list)
-    identificationInfo: list[mcc.Abstract_ResourceDescription] = field(
-        default_factory=list
-    )
 
     metadataStandard: Optional[list[cit.CI_Citation]] = field(
         default_factory=list
@@ -53,6 +50,11 @@ class MD_Metadata:
     metadataExtensionInfo: Optional[
         list[mex.MD_MetadataExtensionInformation]
     ] = field(default_factory=list)
+
+    identificationInfo: list[mcc.Abstract_ResourceDescription] = field(
+        default_factory=list
+    )
+
     contentInfo: Optional[list[mcc.Abstract_ContentInformation]] = field(
         default_factory=list
     )

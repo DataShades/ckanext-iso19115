@@ -1,164 +1,52 @@
 from __future__ import annotations
-
 import dataclasses
+
 import datetime
 import os
-from typing import TYPE_CHECKING, Any, Generic, Iterable, TypeVar, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlparse
-
-from typing_extensions import TypeAlias
 from werkzeug.utils import import_string
 
-if TYPE_CHECKING:
-    from ..types import *
 
-DataClass: TypeAlias = Any
-T = TypeVar("T")
+from ..types import *
+from ..types.base import Codelist
 
-
-def _id(v: Any):
-    return v
-
-
-def _get(el) -> Any:
-    return import_string(".".join([__package__, el]))
-
-
-@dataclasses.dataclass
-class Atomic:
-    value: Any
-
-    def as_jml(self):
-        ns = self.__module__.split(".")[-1]
-        data = JmlRecord(f"{ns}:{self.__class__.__name__}")
-        v = getattr(self, "format", _id)(self.value)
-        data.append(v)
-        return data
-
-
-@dataclasses.dataclass
-class Codelist(Generic[T]):
-    value: str
-
-    def as_jml(self):
-        from ..utils import CodeListValue, codelist_options
-
-        ns = self.__module__.split(".")[-1]
-        name = type(self).__name__
-        data = JmlRecord(f"{ns}:{name}")
-
-        options = codelist_options(name)
-        if options:
-
-            for option in options:
-                if option.name == self.value:
-                    break
-            else:
-                raise ValueError(
-                    f"Codelist [name] does not contain value {self.value}:"
-                    f" {[o.name for o in options]}"
-                )
-        else:
-            option = CodeListValue(self.value, "")
-
-        data.attrs.update(
-            {
-                "codeList": option.location,
-                "codeListValue": option.name,
-            }
-        )
-        data.append(option.name)
-
-        return data
-
-
-class JmlRecord(list):
-    def __init__(self, name: str, initial_attrs: Iterable[Any] = ()):
-        attrs = dict(initial_attrs)
-        super().__init__([name, attrs])
-
-    @property
-    def name(self):
-        return self[0]
-
-    @property
-    def attrs(self):
-        return self[1]
-
-    @property
-    def children(self):
-        return self[2:]
-
-    def refine_attributes(self):
-        if not self.attrs:
-            self.pop(1)
-
-
-def make(el, *args, **kwargs):
+def make(el: str, *args, **kwargs):
     return _get(el)(*args, **kwargs)
 
+def _get(el) -> Any:
+    return import_string(".".join(["ckanext.iso19115.types", el]))
 
-def _default_as_jml(el: DataClass, ns: str):
-    data = JmlRecord(f"{ns}:{el.__class__.__name__}")
-
-    for field in dataclasses.fields(el):
-        k = field.name
-        v = getattr(el, k)
-
-        optional = is_optional(field)
-        # not sure if it's safe to simplify it ignoring any falsy value
-        if optional and (v is None or v == []):
-            continue
-
-        if not isinstance(v, list) or v == []:
-            v = [v]
-
-        for element in v:
-            child = JmlRecord(f"{ns}:{k}")
-            data.append(child)
-
-            if not dataclasses.is_dataclass(element):
-                if is_cs(field):
-                    element = cs(element)
-                elif is_codelist(field):
-                    element = codelist(field, element)
-
-            content = (
-                jml(element) if dataclasses.is_dataclass(element) else element
-            )
-            if content != []:
-                child.append(content)
-            child.refine_attributes()
-
-    data.refine_attributes()
-    return data
+def cs(v: Any) -> gco.CharacterString:
+    return gco.CharacterString(v)
 
 
-def jml(el: DataClass):
-    ns = el.__module__.split(".")[-1]
-
-    if hasattr(el, "as_jml"):
-        data = el.as_jml()
-    else:
-        data = _default_as_jml(el, ns)
-    data.refine_attributes
-
-    return data
+def image(url: str) -> mcc.MD_BrowseGraphic:
+    name, ext = os.path.splitext(os.path.basename(url))
+    links = [link(url)]
+    return mcc.MD_BrowseGraphic(cs(name), fileType=cs(ext) if ext else None, linkage=links)
 
 
-def is_codelist(field: dataclasses.Field) -> bool:
-    return "Codelist[" in field.type
+def link(url: str) -> cit.CI_OnlineResource:
+    details = urlparse(url)
+    return cit.CI_OnlineResource(cs(url), cs(details.scheme))
 
 
-def is_cs(field: dataclasses.Field) -> bool:
-    return "gco.CharacterString" in field.type
+def date(dt: Union[str, datetime.date], type: str) -> cit.CI_Date:
+    if isinstance(dt, str):
+        dt = datetime.datetime.fromisoformat(dt)
+
+    assert isinstance(dt, datetime.date)
+
+    if isinstance(dt, datetime.datetime):
+        v = gco.DateTime(dt)
+    elif isinstance(dt, datetime.date):
+        v = gco.Date(dt)
+
+    return cit.CI_Date(v, cit.CI_DateTypeCode(type))
 
 
-def is_optional(field: dataclasses.Field) -> bool:
-    return "Optional[" in field.type
-
-
-def codelist(field: dataclasses.Field, value: Any) -> dict[str, str]:
+def codelist(field: dataclasses.Field, value: Any) -> Codelist:
     t: str = field.type
     prefix = "Codelist["
     start = t.find(prefix) + len(prefix)
@@ -167,44 +55,38 @@ def codelist(field: dataclasses.Field, value: Any) -> dict[str, str]:
     return make(dc, value)
 
 
-def cs(v: Any):
-    return make("gco:CharacterString", v)
+def individual(name: str, **kwargs) -> cit.CI_Individual:
+    return cit.CI_Individual(cs(name), **kwargs)
+
+def org(name: str, **kwargs) -> cit.CI_Organisation:
+    return cit.CI_Organisation(cs(name), **kwargs)
+
+def responsibility(role: str,  party: cit.AbstractCI_Party) -> cit.CI_Responsibility:
+    return cit.CI_Responsibility(cit.CI_RoleCode(role), party=[party])
 
 
-def image(url: str) -> mcc.MD_BrowseGraphic:
-    name, ext = os.path.splitext(os.path.basename(url))
-    links = [link(url)]
-    return make(
-        "mcc:MD_BrowseGraphic", name, fileType=ext or None, linkage=links
-    )
-
-
-def link(url: str) -> cit.CI_OnlineResource:
-    details = urlparse(url)
-    return make("cit:CI_OnlineResource", url, details.scheme)
-
-
-def date(dt: Union[str, datetime.date], type: str) -> cit.CI_Date:
-    if isinstance(dt, str):
-        dt = datetime.datetime.fromisoformat(dt)
-    return make("cit:CI_Date", dt, type)
-
-
-def responsibility(role, name, logo=None, **kwargs) -> cit.CI_Responsibility:
-    p = make(f"cit:CI_Individual", name, **kwargs)
-    if logo:
-        p = make(f"cit:CI_Organisation", logo, p)
-
-    return make("cit:CI_Responsibility", role, p)
-
-
-def citation(title, **kwargs):
-    return make("cit:CI_Citation", title, **kwargs)
+def citation(title: str, **kwargs):
+    return cit.CI_Citation(cs(title), **kwargs)
 
 
 def keyword(tag: str) -> mri.MD_Keywords:
-    return make("mri:MD_Keywords", tag)
+    return mri.MD_Keywords([cs(tag)])
 
 
 def locale(lang: str) -> lan.PT_Locale:
-    return make("lan:PT_Locale", lang)
+    return lan.PT_Locale(lan.LanguageCode(lang))
+
+
+def id(id_: str, **kwargs) -> mcc.MD_Identifier:
+    return mcc.MD_Identifier(code=cs(id_), **kwargs)
+
+
+def contact(**kwargs) -> cit.CI_Contact:
+    return cit.CI_Contact(**kwargs)
+
+def phone(number: str, type_: Optional[str] = None) -> cit.CI_Telephone:
+    return cit.CI_Telephone(cs(number), cit.CI_TelephoneTypeCode(type_) if type_ else None)
+
+
+def address(deliveryPoint=None, city=None, administrativeArea=None, postalCode=None, country=None, email=None) -> cit.CI_Address:
+    return cit.CI_Address(deliveryPoint, city, administrativeArea, postalCode, country, email)

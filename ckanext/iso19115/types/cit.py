@@ -1,26 +1,12 @@
 from __future__ import annotations
 
-import datetime
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional, Union
 
-from .helpers import Codelist, make
+from .base import Codelist
 
 if TYPE_CHECKING:
-    from ..types import *
-
-
-@dataclass
-class CI_Date:
-    date: Union[gco.Date, gco.DateTime]
-    dateType: Codelist[cit.CI_DateTypeCode]
-
-    def __post_init__(self):
-        if isinstance(self.date, datetime.datetime):
-            self.date = make("gco:DateTime", self.date)
-        elif isinstance(self.date, datetime.date):
-            self.date = make("gco:Date", self.date)
-
+    from . import *
 
 @dataclass
 class CI_DateTypeCode(Codelist):
@@ -33,24 +19,30 @@ class CI_TelephoneTypeCode(Codelist):
 
 
 @dataclass
+class CI_OnLineFunctionCode(Codelist):
+    pass
+
+
+@dataclass
+class CI_Date:
+    date: Union[gco.Date, gco.DateTime]
+    dateType: Codelist[cit.CI_DateTypeCode]
+
+
+@dataclass
 class CI_Telephone:
-    number: str
+    number: gco.CharacterString
     numberType: Optional[Codelist[cit.CI_TelephoneTypeCode]] = None
 
 
 @dataclass
 class CI_Address:
-    deliveryPoint: list[str] = field(default_factory=list)
-    city: Optional[str] = None
-    administrativeArea: Optional[str] = None
-    postalCode: Optional[str] = None
-    country: Optional[str] = None
-    electronicMailAddress: list[str] = field(default_factory=list)
-
-
-@dataclass
-class CI_OnLineFunctionCode(Codelist):
-    pass
+    deliveryPoint: list[gco.CharacterString] = field(default_factory=list)
+    city: Optional[gco.CharacterString] = None
+    administrativeArea: Optional[gco.CharacterString] = None
+    postalCode: Optional[gco.CharacterString] = None
+    country: Optional[gco.CharacterString] = None
+    electronicMailAddress: list[gco.CharacterString] = field(default_factory=list)
 
 
 @dataclass
@@ -66,32 +58,12 @@ class CI_OnlineResource:
 
 @dataclass
 class CI_Contact:
-    phone: list[CI_Telephone] = field(default_factory=list)
-    address: list[CI_Address] = field(default_factory=list)
-    onlineResource: list[CI_OnlineResource] = field(default_factory=list)
+    phone: list[cit.CI_Telephone] = field(default_factory=list)
+    address: list[cit.CI_Address] = field(default_factory=list)
+    onlineResource: list[cit.CI_OnlineResource] = field(default_factory=list)
     hoursOfService: list[str] = field(default_factory=list)
     contactInstructions: Optional[str] = None
     contactType: Optional[str] = None
-
-
-@dataclass
-class AbstractCI_Party:
-    name: gco.CharacterString = None
-    contactInfo: Optional[list[CI_Contact]] = field(default_factory=list)
-    partyIdentifier: Optional[list[mcc.MD_Identifier]] = field(
-        default_factory=list
-    )
-
-
-@dataclass
-class CI_Individual(AbstractCI_Party):
-    positionName: Optional[gco.CharacterString] = None
-
-
-@dataclass
-class CI_Organisation:
-    logo: Optional[list[mcc.MD_BrowseGraphic]] = field(default_factory=list)
-    individual: Optional[list[CI_Individual]] = field(default_factory=list)
 
 
 @dataclass
@@ -116,6 +88,27 @@ class CI_Series:
     name: Optional[str] = None
     issueIdentification: Optional[str] = None
     page: Optional[str] = None
+
+
+
+@dataclass
+class AbstractCI_Party:
+    name: gco.CharacterString = None
+    contactInfo: Optional[list[CI_Contact]] = field(default_factory=list)
+    partyIdentifier: Optional[list[mcc.MD_Identifier]] = field(
+        default_factory=list
+    )
+
+
+@dataclass
+class CI_Individual(AbstractCI_Party):
+    positionName: Optional[gco.CharacterString] = None
+
+
+@dataclass
+class CI_Organisation(AbstractCI_Party):
+    logo: Optional[list[mcc.MD_BrowseGraphic]] = field(default_factory=list)
+    individual: Optional[list[CI_Individual]] = field(default_factory=list)
 
 
 @dataclass

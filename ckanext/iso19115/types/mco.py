@@ -3,10 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
-from ckanext.iso19115.converter.helpers import Codelist
+from .base import Codelist
 
 if TYPE_CHECKING:
-    from ..types import *
+    from . import *
 
 
 @dataclass

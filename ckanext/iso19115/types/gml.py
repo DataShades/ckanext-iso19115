@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Optional
-
-if TYPE_CHECKING:
-    from .. import types
+from typing import Any, Optional
 
 
 @dataclass
@@ -380,3 +377,16 @@ class AbstractCRS:
     name: Optional[str] = None
     remarks: Optional[str] = None
     scope: list[str] = field(default_factory=list)
+
+
+@dataclass
+class UnitDefinition:
+    metaDataProperty: Optional[list[GenericMetaData]] = field(default_factory=list)
+    description: Optional[str] = None
+    descriptionReference: Optional[Any] = None
+    identifier: Any = None
+    name: Optional[list[str]] = field(default_factory=list)
+    remarks: Optional[str] = None
+    quantityType: Optional[str] = None
+    quantityTypeReference: Optional[str] = None
+    catalogSymbol: Optional[str] = None

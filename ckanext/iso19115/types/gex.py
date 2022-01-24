@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from .. import types
+    from . import *
 
 
 @dataclass
@@ -21,13 +21,13 @@ class EX_Extent:
 class EX_VerticalExtent:
     minimumValue: str
     maximumValue: str
-    verticalCRSId: Optional[types.mrs.MD_ReferenceSystem] = None
-    verticalCRS: Optional[types.gml.AbstractCRS] = None
+    verticalCRSId: Optional[mrs.MD_ReferenceSystem] = None
+    verticalCRS: Optional[gml.AbstractCRS] = None
 
 
 @dataclass
 class EX_TemporalExtent:
-    extent: types.gml.AbstractTimePrimitive
+    extent: gml.AbstractTimePrimitive
 
 
 @dataclass
@@ -37,12 +37,12 @@ class AbstractEX_GeographicExtent:
 
 @dataclass
 class EX_GeographicDescription(AbstractEX_GeographicExtent):
-    geographicIdentifier: types.mcc.MD_Identifier
+    geographicIdentifier: mcc.MD_Identifier
 
 
 @dataclass
 class EX_BoundingPolygon(AbstractEX_GeographicExtent):
-    polygon: list[types.gml.AbstractGeometry] = field(default_factory=list)
+    polygon: list[gml.AbstractGeometry] = field(default_factory=list)
 
 
 @dataclass

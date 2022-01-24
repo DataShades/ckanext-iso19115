@@ -56,7 +56,7 @@ def build_xml(source):
 @click.option("-q", "--qualified", is_flag=True)
 @click.option("-v", "--annotated", is_flag=True)
 @click.option(
-    "-f", "--format", type=click.Choice(["overview"]), default="overview"
+    "-f", "--format", type=click.Choice(["overview", "dataclass"]), default="overview"
 )
 def build_describe(
     root: str,

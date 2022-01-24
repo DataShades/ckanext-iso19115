@@ -4,7 +4,7 @@ import functools
 import pickle
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Container, Iterable, NamedTuple, Optional, cast
+from typing import Any, Container, Iterable, Optional, cast
 from xml.etree import ElementTree as xtree
 
 import ckan.plugins.toolkit as tk
@@ -13,13 +13,7 @@ from lxml import etree as ltree
 from lxml import isoschematron
 
 from . import builder
-
-
-class CodeListValue(NamedTuple):
-    name: str
-    definition: str
-    location: str = "http://standards.iso.org/iso/19115/resources/Codelist/lan/CharacterSetCode.xml"
-
+from .types.base import CodeListValue
 
 DEFAULT_XSD = "mdb2"
 _root = Path(__file__).parent
@@ -31,6 +25,7 @@ ns = {
     "cat": "http://standards.iso.org/iso/19115/-3/cat/1.0",
     "cit": "http://standards.iso.org/iso/19115/-3/cit/2.0",
     "gco": "http://standards.iso.org/iso/19115/-3/gco/1.0",
+    "gcx": "http://standards.iso.org/iso/19115/-3/gcx/1.0",
     "gex": "http://standards.iso.org/iso/19115/-3/gex/1.0",
     "lan": "http://standards.iso.org/iso/19115/-3/lan/1.0",
     "mac": "http://standards.iso.org/iso/19115/-3/mac/2.0",

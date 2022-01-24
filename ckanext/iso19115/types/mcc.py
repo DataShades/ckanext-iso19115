@@ -3,24 +3,27 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
-from ckanext.iso19115.converter.helpers import Codelist
+from .base import Codelist
 
 if TYPE_CHECKING:
-    from ..types import *
+    from . import *
 
 
 @dataclass
 class URI:
     ...
 
+@dataclass
+class MD_ProgressCode(Codelist):
+    pass
 
 @dataclass
 class MD_Identifier:
-    code: str
     authority: Optional[cit.CI_Citation] = None
-    codeSpace: Optional[str] = None
-    version: Optional[str] = None
-    description: Optional[str] = None
+    code: gco.CharacterString = None
+    codeSpace: Optional[gco.CharacterString] = None
+    version: Optional[gco.CharacterString] = None
+    description: Optional[gco.CharacterString] = None
 
 
 @dataclass
@@ -74,9 +77,9 @@ class Abstract_ResourceDescription:
     abstract: gco.CharacterString
     purpose: Optional[gco.CharacterString] = None
     credit: Optional[list[gco.CharacterString]] = field(default_factory=list)
-    status: Optional[list[str]] = field(
+    status: Optional[list[Codelist[mcc.MD_ProgressCode]]] = field(
         default_factory=list
-    )  # codelit("MD_ProgressCode")
+    )
     pointOfContact: Optional[list[cit.CI_Responsibility]] = field(
         default_factory=list
     )

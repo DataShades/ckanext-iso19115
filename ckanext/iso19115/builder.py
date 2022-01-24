@@ -129,6 +129,45 @@ class Builder:
         )
         if fmt == "overview":
             print(tree)
+        elif fmt == "dataclass":
+            tree.max_depth = 2
+            print_dataclass(tree)
+
+def print_dataclass(tree):
+    definition = ""
+    for node in tree:
+        d = depth.get()
+        if d == 0:
+            definition += "@dataclass\n"
+            definition += f"class {node.node.local_name}:\n"
+
+        elif d == 1:
+            definition += f"    {node.node.local_name}"
+            type_ = "{type}"
+            value = None
+            if node.is_multiple():
+                type_ = f"list[{type_}]"
+                value = 'field(default_factory=list)'
+            if node.is_optional():
+                type_ = f"Optional[{type_}]"
+                if not value:
+                    value = 'None'
+
+            definition += f": {type_}"
+            if value:
+                definition += f" = {value}"
+            definition += "\n"
+
+        elif d == 2:
+            name = node.name(False) or 'Any'
+            type_ = name.replace(":", ".")
+            if 'codeListValue' in getattr(node.node, "attributes", {}):
+                type_ = f"Codelist[{type_}]"
+            definition = definition.format(type=type_)
+
+
+    print(definition)
+
 
 
 class Tree:
