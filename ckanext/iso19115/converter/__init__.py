@@ -82,6 +82,7 @@ class Converter:
         scope: mdb.MD_MetadataScope = mdb.MD_MetadataScope(
             mcc.MD_ScopeCode("dataset"), h.cs("Dataset")
         )
+
         self.data.metadataScope.append(scope)
 
     def _add_contacts(self):

@@ -19,6 +19,7 @@ def get_actions():
     }
 
 
+@tk.side_effect_free
 def package_show(context, data_dict):
     implementations = iter(p.PluginImplementations(IIso19115))
     conv: c.Converter = next(implementations).iso19115_metadata_converter(

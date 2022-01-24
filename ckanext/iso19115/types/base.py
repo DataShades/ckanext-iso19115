@@ -51,7 +51,7 @@ class Codelist(Generic[T]):
             if option.name == value:
                 return option
         raise ValueError(
-            f"Codelist {ns}:[name] does not contain value {value}:"
+            f"Codelist {ns}:{name} does not contain value {value}:"
             f" {[o.name for o in options]}"
         )
 
