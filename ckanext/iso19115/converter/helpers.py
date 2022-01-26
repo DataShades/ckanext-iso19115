@@ -3,7 +3,7 @@ import dataclasses
 
 import datetime
 import os
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union, overload
 from urllib.parse import urlparse
 from werkzeug.utils import import_string
 
@@ -37,24 +37,40 @@ def link(url: str) -> cit.CI_OnlineResource:
     return cit.CI_OnlineResource(cs(url), cs(details.scheme))
 
 
-def date(dt: Union[str, datetime.date], type: str) -> cit.CI_Date:
+@overload
+def date(dt: Any, force_datetime: Literal[True]) -> gco.DateTime:
+    ...
+
+
+@overload
+def date(
+    dt: Union[str, datetime.date], force_datetime: bool = False
+) -> Union[gco.Date, gco.DateTime]:
+    ...
+
+
+def date(dt, force_datetime=False):
     if isinstance(dt, str):
         dt = datetime.datetime.fromisoformat(dt)
     assert isinstance(dt, datetime.date)
 
-    if isinstance(dt, datetime.datetime) and (
-        dt.hour,
-        dt.minute,
-        dt.second,
-    ) == (0, 0, 0):
+    if (
+        isinstance(dt, datetime.datetime)
+        and not force_datetime
+        and (
+            dt.hour,
+            dt.minute,
+            dt.second,
+        )
+        == (0, 0, 0)
+    ):
         dt = dt.date()
 
     if isinstance(dt, datetime.datetime):
         v = gco.DateTime(dt)
     elif isinstance(dt, datetime.date):
         v = gco.Date(dt)
-
-    return cit.CI_Date(v, cit.CI_DateTypeCode(type))
+    return v
 
 
 def codelist(field: dataclasses.Field, value: Any) -> Codelist:

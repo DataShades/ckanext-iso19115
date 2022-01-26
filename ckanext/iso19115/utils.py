@@ -163,7 +163,7 @@ def validate_schematron(content: bytes, schemas: Iterable[str] = frozenset()):
             " ".join(l.strip() for l in f.itertext()) for f in failed
         )
     if errors:
-        raise tk.ValidationError({"schematron": errors})
+        raise tk.ValidationError({"schematron": list(set(errors))})
 
 
 def validate_codelist(el: xtree.Element, xsd: xmlschema.XMLSchemaBase):

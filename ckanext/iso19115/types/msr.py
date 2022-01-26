@@ -49,7 +49,9 @@ class MD_GeometricObjects:
 class MD_GridSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
     scope: Optional[mcc.MD_Scope] = None
     numberOfDimensions: gco.Integer = gco.Integer(0)
-    axisDimensionProperties: Optional[list[msr.MD_Dimension]] = field(default_factory=list)
+    axisDimensionProperties: Optional[list[msr.MD_Dimension]] = field(
+        default_factory=list
+    )
     cellGeometry: Codelist[msr.MD_CellGeometryCode] = None
     transformationParameterAvailability: gco.Boolean = gco.Boolean(False)
 

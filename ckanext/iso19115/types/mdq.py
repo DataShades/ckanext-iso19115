@@ -93,7 +93,6 @@ class DQ_TopologicalConsistency(AbstractDQ_Element):
 
 @dataclass
 class DQ_Confidence(AbstractDQ_Element):
-    pass
     relatedElement: Optional[list[mdq.AbstractDQ_Element]] = field(
         default_factory=list
     )

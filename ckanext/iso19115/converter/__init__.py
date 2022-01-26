@@ -104,12 +104,21 @@ class Converter:
             self.data.add_contact(author_contact)
 
     def _add_dates(self):
-        creation = self.pkg["metadata_created"]
-        self.data.add_dateInfo(h.date(creation, "creation"))
+        has_creation = True
 
-        revision = self.pkg["metadata_modified"]
-        if revision != creation:
-            self.data.add_dateInfo(h.date(revision, "revision"))
+        for date in self.pkg.get("date_info", []):
+            self.data.add_dateInfo(
+                cit.CI_Date(
+                    h.date(date["date"]), cit.CI_DateTypeCode(date["type"])
+                )
+            )
+            if date["type"] == "creation":
+                has_creation = True
+        if not has_creation:
+            creation = self.pkg["metadata_created"]
+            self.data.add_dateInfo(
+                cit.CI_Date(h.date(creation), cit.CI_DateTypeCode(creation))
+            )
 
     def _add_standard(self):
         standard: cit.CI_Citation = h.citation("ISO 19115", edition="2016")
@@ -187,8 +196,23 @@ class Converter:
         pass
 
     def _add_dq(self):
-        dq: mdq.DQ_DataQuality
-        pass
+        for dq in self.pkg.get("data_quality", []):
+            result = mdq.DQ_DescriptiveResult(
+                statement=h.cs(dq["details"] or "xx")
+            )
+            if "date" in dq:
+                result.dateTime = h.date(dq["date"], True)
+
+            report: mdq.AbstractDQ_Element = h.make(
+                dq["type"], result=[result]
+            )
+
+            self.data.dataQualityInfo.append(
+                mdq.DQ_DataQuality(
+                    scope=mcc.MD_Scope(mcc.MD_ScopeCode("dataset")),
+                    report=[report],
+                )
+            )
 
     def _add_lineage(self):
         ln: mrl.LI_Lineage

@@ -6,7 +6,7 @@ try:
 except ImportError:
     IMetaexport = None
 
-from . import cli, interfaces, views
+from . import cli, interfaces, views, helpers
 from .logic import action
 
 
@@ -15,6 +15,7 @@ class Iso19115Plugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IClick)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IConfigurer)
+    plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(interfaces.IIso19115, inherit=True)
 
     if IMetaexport:
@@ -35,6 +36,7 @@ class Iso19115Plugin(plugins.SingletonPlugin):
     # IConfigurer
     def update_config(self, config):
         tk.add_template_directory(config, "templates")
+        tk.add_resource("assets", "iso19115")
 
     # IMetaexport
     def register_metaexport_format(self):
@@ -44,6 +46,10 @@ class Iso19115Plugin(plugins.SingletonPlugin):
 
     def register_data_extractors(self, formatters):
         formatters.get("iso19115").set_data_extractor(_data_extractor)
+
+    # ITemplateHelpers
+    def get_helpers(self):
+        return helpers.get_helpers()
 
 
 def _data_extractor(pkg_id):

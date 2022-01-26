@@ -54,6 +54,8 @@
 
       <sch:assert test="$hasGeoextent">
 	The dataset MUST provide a geographic description or a bounding box.
+	Rule: MD_Identification
+	Ref: {(MD_Metadata.metadataScope.MD_MetadataScope.resourceScope)=’dataset’ implies count(extent.geographicElement.EX_GeographicBoundingBox + extent.geographicElement.EX_GeographicDescription) >= 1}
       </sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -83,6 +85,7 @@
 
       <sch:assert test="$hasTopics">
 	A topic category MUST be specified for dataset or series.
+	Ref: {(MD_Metadata.metadataScope.MD_Scope.resourceScope) = (’dataset’ or ‘series’) implies topicCategory is mandatory}
       </sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -118,6 +121,9 @@
 
       <sch:assert test="$hasName or $hasMdRef">
 	When a resource is associated, a name or a metadata reference MUST be specified.
+	Rule: MD_AssociatedResource
+	Ref: {count(name + metadataReference) > 0}
+
       </sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -150,6 +156,8 @@
 
       <sch:assert test="$hasAtLeastOneLanguage">
 	Resource language MUST be defined when the resource includes textual information.
+	Rule: MD_DataIdentification
+	Ref: {defaultLocale documented if resource includes textual information}
       </sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -200,6 +208,9 @@
 
        <sch:assert test="$hasAtLeastOneTaxonomy">
 	 A service metadata SHALL refer to the service taxonomy defined in ISO19119 defining one or more value in the keyword section.
+	 Rule: MD_Keywords
+	 Ref: {When the resource described is a service, one instance of MD_Keyword shall refer to the service taxonomy defined in ISO19119}
+
        </sch:assert>
     </sch:rule>
   </sch:pattern>

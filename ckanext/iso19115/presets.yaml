@@ -1,0 +1,74 @@
+scheming_presets_version: 2
+about: ~
+about_url: ~
+_preset_select: &preset_select
+  form_snippet: select.html
+  display_snippet: select.html
+  validators: scheming_required scheming_choices
+
+presets:
+  - preset_name: iso19115_date_info
+    values:
+        label: Dates
+        repeating_label: Date
+        repeating_subfields:
+          - field_name: type
+            label: Type
+            required: true
+            preset: select
+            choices_helper: iso19115_codelist_as_options
+            iso19115_source: CI_DateTypeCode
+          - field_name: date
+            label: Date
+            preset: date
+            required: true
+
+  - preset_name: iso19115_data_quality
+    values:
+        label: Reports
+        repeating_label: Report
+        repeating_subfields:
+          - field_name: type
+            label: Report Type
+            required: true
+            preset: select
+            choices_helper: iso19115_implementation_as_options
+            iso19115_source: "mdq:AbstractDQ_Element"
+          - field_name: date
+            label: Date
+            preset: date
+            required: false
+          - field_name: details
+            label: Details
+            form_snippet: textarea.html
+            required: false
+
+  - preset_name: iso19115_presentation_form_field
+    values:
+      <<: *preset_select
+      choices_helper: iso19115_codelist_as_options
+      iso19115_source: CI_PresentationFormCode
+
+  - preset_name: iso19115_progress_field
+    values:
+      <<: *preset_select
+      choices_helper: iso19115_codelist_as_options
+      iso19115_source: MD_ProgressCode
+
+  - preset_name: iso19115_restriction_field
+    values:
+      <<: *preset_select
+      choices_helper: iso19115_codelist_as_options
+      iso19115_source: MD_RestrictionCode
+
+  - preset_name: iso19115_update_frequency_field
+    values:
+      <<: *preset_select
+      choices_helper: iso19115_codelist_as_options
+      iso19115_source: MD_MaintenanceFrequencyCode
+
+  - preset_name: iso19115_topic_field
+    values:
+      <<: *preset_select
+      choices_helper: iso19115_codelist_as_options
+      iso19115_source: MD_TopicCategoryCode

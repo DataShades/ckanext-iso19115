@@ -133,6 +133,13 @@ class Builder:
             tree.max_depth = 2
             print_dataclass(tree)
 
+    def implementations(self) -> list[BaseNode]:
+        node = make_node(self.root)
+        if not node.is_abstract():
+            return [node]
+
+        return list(node.children)
+
 
 def print_dataclass(tree):
     definition = ""
