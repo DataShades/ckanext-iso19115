@@ -49,7 +49,7 @@ class MD_ScopeCode(Codelist):
 @dataclass
 class MD_Scope:
     level: Codelist[mcc.MD_ScopeCode]
-    # extent: list[gex.EX_Extent] = field(default_factory=list)
+    extent: list[gex.EX_Extent] = field(default_factory=list)
     levelDescription: list[MD_ScopeDescription] = field(default_factory=list)
 
 

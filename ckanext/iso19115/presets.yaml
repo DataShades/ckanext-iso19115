@@ -7,6 +7,29 @@ _preset_select: &preset_select
   validators: scheming_required scheming_choices
 
 presets:
+  - preset_name: iso19115_contact
+    values:
+        label: Contacts
+        repeating_label: Contact
+        repeating_subfields:
+          - field_name: role
+            label: Role
+            required: true
+            preset: select
+            choices_helper: iso19115_codelist_as_options
+            iso19115_source: CI_RoleCode
+          - field_name: name
+            label: Name
+          - field_name: position
+            label: Position
+          - field_name: individual
+            label: Individual
+          - field_name: phone
+            label: Phone
+          - field_name: email
+            label: Email
+
+
   - preset_name: iso19115_date_info
     values:
         label: Dates

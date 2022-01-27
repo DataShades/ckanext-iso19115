@@ -86,22 +86,26 @@ class Converter:
         self.data.metadataScope.append(scope)
 
     def _add_contacts(self):
-        org = self.pkg["organization"]
-        if org:
-            contact = h.responsibility(
-                "pointOfContact",
-                h.org(
-                    self.pkg["organization"]["title"],
-                    logo=h.image(org["image_url"]),
-                ),
-            )
-            self.data.add_contact(contact)
+        for contact in self.pkg.get("contact", []):
 
-        author_contact = self._make_user_contact(
-            "author", self.pkg["creator_user_id"]
-        )
-        if author_contact:
-            self.data.add_contact(author_contact)
+            ind = cit.CI_Individual(
+                name=h.cs(contact.get("inidvidual")),
+                positionName=h.cs(contact.get("position")),
+            )
+            org = h.org(
+                contact.get("name"),
+                contactInfo=[
+                    cit.CI_Contact(
+                        phone=[h.phone(contact.get("phone"))],
+                        address=[
+                            h.address(email=h.cs(contact.get("email")))
+                        ],
+                    )
+                ],
+                individual=[ind],
+            )
+            resp = cit.CI_Responsibility(contact["role"], [org])
+            self.data.add_contact(resp)
 
     def _add_dates(self):
         has_creation = True
