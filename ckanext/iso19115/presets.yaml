@@ -22,7 +22,7 @@ presets:
               data-module: autocomplete
           - field_name: count
             label: Object count
-            validators: natural_number_validator
+            validators: ignore_empty natural_number_validator
 
   - preset_name: iso19115_contact
     values:
