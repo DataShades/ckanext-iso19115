@@ -92,6 +92,3 @@ class MD_Metadata:
         ident: Union[mri.MD_DataIdentification, srv.SV_ServiceIdentification],
     ):
         self.identificationInfo.append(ident)
-
-    def set_locale(self, locale: lan.PT_Locale):
-        self.defaultLocale = locale

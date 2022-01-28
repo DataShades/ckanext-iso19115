@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import contextlib
-from typing import Any
+from typing import Any, Iterable
 from typing_extensions import TypeAlias
 import ckan.plugins.toolkit as tk
 
@@ -63,22 +63,25 @@ class Converter:
         return result
 
     def _add_identifier(self):
+        mcc.MD_Identifier
         identifier: mcc.MD_Identifier = h.id(
             self.pkg["id"], codeSpace="urn:uuid"
         )
         self.data.metadataIdentifier = identifier
 
     def _add_default_locale(self):
+        lan.PT_Locale
         locale = h.locale(
             self.pkg.get("language") or tk.config.get("ckan.locale_default")
         )
-        self.data.set_locale(locale)
+        self.data.defaultLocale = locale
 
     def _add_parent(self):
-        parent: cit.CI_Citation
+        cit.CI_Citation
         pass
 
     def _add_scope(self):
+        mdb.MD_MetadataScope
         scope: mdb.MD_MetadataScope = mdb.MD_MetadataScope(
             mcc.MD_ScopeCode("dataset"), h.cs("Dataset")
         )
@@ -86,6 +89,7 @@ class Converter:
         self.data.metadataScope.append(scope)
 
     def _add_contacts(self):
+        cit.CI_Responsibility
         for contact in self.pkg.get("contact", []):
 
             ind = cit.CI_Individual(
@@ -97,9 +101,7 @@ class Converter:
                 contactInfo=[
                     cit.CI_Contact(
                         phone=[h.phone(contact.get("phone"))],
-                        address=[
-                            h.address(email=h.cs(contact.get("email")))
-                        ],
+                        address=[h.address(email=h.cs(contact.get("email")))],
                     )
                 ],
                 individual=[ind],
@@ -107,7 +109,14 @@ class Converter:
             resp = cit.CI_Responsibility(contact["role"], [org])
             self.data.add_contact(resp)
 
+        for contact in self._extra_contacts():
+            self.data.add_contact(contact)
+
+    def _extra_contacts(self) -> Iterable[cit.CI_Responsibility]:
+        return []
+
     def _add_dates(self):
+        cit.CI_Date
         has_creation = True
 
         for date in self.pkg.get("date_info", []):
@@ -125,81 +134,94 @@ class Converter:
             )
 
     def _add_standard(self):
+        cit.CI_Citation
         standard: cit.CI_Citation = h.citation("ISO 19115", edition="2016")
         self.data.metadataStandard.append(standard)
 
     def _add_profile(self):
-        profile: cit.CI_Citation
+        cit.CI_Citation
         pass
 
     def _add_alternative_reference(self):
-        ref: cit.CI_Citation
+        cit.CI_Citation
         pass
 
     def _add_other_locale(self):
-        locale: lan.PT_Locale
+        lan.PT_Locale
         pass
 
     def _add_linkage(self):
-        link: cit.CI_OnlineResource
+        cit.CI_OnlineResource
         pass
 
     def _add_spatial_representation(self):
-        spatial: mcc.Abstract_SpatialRepresentation
-        pass
-
-    def _add_reference_system(self):
-        ref: mrs.MD_ReferenceSystem
-        pass
-
-    def _add_metadata_extension(self):
-        ext: mex.MD_MetadataExtensionInformation
-        pass
-
-    def _add_identification(self):
-        cit: cit.CI_Citation = h.citation(
-            self.pkg["title"], identifier=h.id(self.pkg["id"])
-        )
-        poc = self._make_user_contact("author", self.pkg["creator_user_id"])
-        kw = [h.keyword(t) for t in self.pkg["tags"]]
-
-        resources = []
-        for res in self.pkg["resources"]:
-            r_name = (
-                h.citation(res["name"], presentationForm="documentDigital")
-                if res["name"]
-                else None
-            )
-            resources.append(
-                mri.MD_AssociatedResource(
-                    r_name,
-                    mri.DS_AssociationTypeCode("isComposedOf"),
+        # mcc.Abstract_SpatialRepresentation
+        msr.MD_GridSpatialRepresentation
+        msr.MD_VectorSpatialRepresentation
+        for rep in self.pkg.get("vector_spatial_representation", []):
+            self.data.spatialRepresentationInfo.append(
+                msr.MD_VectorSpatialRepresentation(
+                    geometricObjects=msr.MD_GeometricObjects(
+                        msr.MD_GeometricObjectTypeCode(rep["type"]),
+                        gco.Integer(rep["count"] or 0),
+                    )
                 )
             )
 
-        ident: mri.MD_DataIdentification = mri.MD_DataIdentification(
-            cit,
-            self.pkg["notes"],
-            pointOfContact=[poc] if poc else [],
-            descriptiveKeywords=kw,
-            associatedResource=resources,
-        )
+    def _add_reference_system(self):
+        mrs.MD_ReferenceSystem
+        pass
 
+    def _add_metadata_extension(self):
+        mex.MD_MetadataExtensionInformation
+        pass
+
+    def _add_identification(self):
+        mcc.Abstract_ResourceDescription
+        mri.MD_DataIdentification
+        srv.SV_ServiceIdentification
+
+        citation: cit.CI_Citation = h.citation(
+            self.pkg["title"], identifier=h.id(self.pkg["id"])
+        )
+        kw = [h.keyword(t) for t in self.pkg["tags"]]
+
+        ident: mri.MD_DataIdentification = mri.MD_DataIdentification(
+            citation,
+            self.pkg["notes"],
+            descriptiveKeywords=kw,
+        )
         self.data.add_identificationInfo(ident)
 
-    def _add_content(self):
-        content: mcc.Abstract_ContentInformation
-        content: mrc.MD_FeatureCatalogueDescription
-        content: mrc.MD_CoverageDescription
-        content: mrc.MD_FeatureCatalogue
+        for res in self.pkg["resources"]:
+            self.data.add_identificationInfo(
+                mri.MD_DataIdentification(
+                    h.citation(
+                        res["name"], presentationForm="documentDigital"
+                    ),
+                    h.cs(res["description"]),
+                    resourceFormat=[
+                        mrd.MD_Format(
+                            cit.CI_Citation(res["format"]),
+                            res.get("version"),
+                        )
+                    ],
+                )
+            ),
 
+    def _add_content(self):
+        # mcc.Abstract_ContentInformation
+        mrc.MD_FeatureCatalogueDescription
+        mrc.MD_CoverageDescription
+        mrc.MD_FeatureCatalogue
         pass
 
     def _add_distribution(self):
-        dist: mrd.MD_Distribution
+        mrd.MD_Distribution
         pass
 
     def _add_dq(self):
+        mdq.DQ_DataQuality
         for dq in self.pkg.get("data_quality", []):
             result = mdq.DQ_DescriptiveResult(
                 statement=h.cs(dq["details"] or "xx")
@@ -219,27 +241,27 @@ class Converter:
             )
 
     def _add_lineage(self):
-        ln: mrl.LI_Lineage
+        mrl.LI_Lineage
         pass
 
     def _add_catalogue(self):
-        catalogue: mpc.MD_PortrayalCatalogueReference
+        mpc.MD_PortrayalCatalogueReference
         pass
 
     def _add_constraints(self):
-        ctr: mco.MD_Constraints
+        mco.MD_Constraints
         pass
 
     def _add_schema(self):
-        schema: mas.MD_ApplicationSchemaInformation
+        mas.MD_ApplicationSchemaInformation
         pass
 
     def _add_maintenance(self):
-        maintenance: mmi.MD_MaintenanceInformation
+        mmi.MD_MaintenanceInformation
         pass
 
     def _add_acquisition(self):
-        acq: mac.MI_AcquisitionInformation
+        mac.MI_AcquisitionInformation
         pass
 
     def _make_user_contact(self, role: str, user_id: str):

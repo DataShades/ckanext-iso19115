@@ -125,7 +125,7 @@ class Abstract_ResourceDescription:
 
 @dataclass
 class Abstract_SpatialRepresentation:
-    ...
+    scope: Optional[mcc.MD_Scope] = None
     # |msr:MD_GridSpatialRepresentation [id, uuid] (too deep...)
     # |msr:MD_VectorSpatialRepresentation [id, uuid] (too deep...)
 

@@ -7,6 +7,23 @@ _preset_select: &preset_select
   validators: scheming_required scheming_choices
 
 presets:
+  - preset_name: iso19115_vector_spatial_representation
+    values:
+        label: Vector representation
+        repeating_label: Record
+        repeating_subfields:
+          - field_name: type
+            label: Object type
+            preset: select
+            required: true
+            choices_helper: iso19115_codelist_as_options
+            iso19115_source: MD_GeometricObjectTypeCode
+            form_attrs:
+              data-module: autocomplete
+          - field_name: count
+            label: Object count
+            validators: natural_number_validator
+
   - preset_name: iso19115_contact
     values:
         label: Contacts

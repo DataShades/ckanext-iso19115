@@ -10,8 +10,13 @@ if TYPE_CHECKING:
 
 
 @dataclass
+class MD_RepresentativeFraction:
+    denominator: gco.Integer
+
+
+@dataclass
 class MD_Resolution:
-    ...
+    equivalentScale: MD_RepresentativeFraction
 
 
 @dataclass

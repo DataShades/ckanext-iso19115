@@ -47,7 +47,6 @@ class MD_GeometricObjects:
 
 @dataclass
 class MD_GridSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
-    scope: Optional[mcc.MD_Scope] = None
     numberOfDimensions: gco.Integer = gco.Integer(0)
     axisDimensionProperties: Optional[list[msr.MD_Dimension]] = field(
         default_factory=list
@@ -58,7 +57,6 @@ class MD_GridSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
 
 @dataclass
 class MD_VectorSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
-    scope: Optional[mcc.MD_Scope] = None
     topologyLevel: Optional[Codelist[MD_TopologyLevelCode]] = None
     geometricObjects: Optional[list[MD_GeometricObjects]] = field(
         default_factory=list

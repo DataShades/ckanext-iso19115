@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from .base import Codelist
 
-from . import gco
+from . import gco, mcc
 
 if TYPE_CHECKING:
     from . import *
@@ -39,7 +39,7 @@ class MD_AttributeGroup:
 
 
 @dataclass
-class MD_FeatureCatalogueDescription:
+class MD_FeatureCatalogueDescription(mcc.Abstract_ContentInformation):
     complianceCode: Optional[gco.Boolean] = None
     locale: Optional[list[lan.PT_Locale]] = field(default_factory=list)
     includedWithDataset: Optional[gco.Boolean] = None
@@ -52,7 +52,7 @@ class MD_FeatureCatalogueDescription:
 
 
 @dataclass
-class MD_CoverageDescription:
+class MD_CoverageDescription(mcc.Abstract_ContentInformation):
     attributeDescription: gco.RecordType = None
     processingLevelCode: Optional[mcc.MD_Identifier] = None
     attributeGroup: Optional[list[mrc.MD_AttributeGroup]] = field(
@@ -61,5 +61,5 @@ class MD_CoverageDescription:
 
 
 @dataclass
-class MD_FeatureCatalogue:
+class MD_FeatureCatalogue(mcc.Abstract_ContentInformation):
     featureCatalogue: list[Any] = field(default_factory=list)
