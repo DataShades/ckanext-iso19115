@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class EX_Extent:
-    description: Optional[str] = None
+    description: Optional[gco.CharacterString] = None
     geographicElement: list[AbstractEX_GeographicExtent] = field(
         default_factory=list
     )
@@ -32,12 +32,12 @@ class EX_TemporalExtent:
 
 @dataclass
 class AbstractEX_GeographicExtent:
-    extentTypeCode: bool
+    extentTypeCode: Optional[gco.Boolean] = None
 
 
 @dataclass
 class EX_GeographicDescription(AbstractEX_GeographicExtent):
-    geographicIdentifier: mcc.MD_Identifier
+    geographicIdentifier: mcc.MD_Identifier = None
 
 
 @dataclass
@@ -47,7 +47,7 @@ class EX_BoundingPolygon(AbstractEX_GeographicExtent):
 
 @dataclass
 class EX_GeographicBoundingBox(AbstractEX_GeographicExtent):
-    westBoundLongitude: str
-    eastBoundLongitude: str
-    southBoundLatitude: str
-    northBoundLatitude: str
+    westBoundLongitude: gco.Decimal = None
+    eastBoundLongitude: gco.Decimal = None
+    southBoundLatitude: gco.Decimal = None
+    northBoundLatitude: gco.Decimal = None

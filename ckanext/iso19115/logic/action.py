@@ -47,6 +47,9 @@ def package_show(context, data_dict):
     conv.process()
     conv.finalize()
 
-    result = conv.build()
+    try:
+        result = conv.build()
+    except ValueError as e:
+        raise tk.ValidationError({"schema": [str(e)]})
 
     return result

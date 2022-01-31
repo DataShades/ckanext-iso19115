@@ -163,7 +163,7 @@ class Converter:
                 msr.MD_VectorSpatialRepresentation(
                     geometricObjects=msr.MD_GeometricObjects(
                         msr.MD_GeometricObjectTypeCode(rep["type"]),
-                        gco.Integer(rep["count"] or 0),
+                        gco.Integer(rep.get("count") or 0),
                     )
                 )
             )
@@ -193,21 +193,21 @@ class Converter:
         )
         self.data.add_identificationInfo(ident)
 
-        for res in self.pkg["resources"]:
-            self.data.add_identificationInfo(
-                mri.MD_DataIdentification(
-                    h.citation(
-                        res["name"], presentationForm="documentDigital"
-                    ),
-                    h.cs(res["description"]),
-                    resourceFormat=[
-                        mrd.MD_Format(
-                            cit.CI_Citation(res["format"]),
-                            res.get("version"),
-                        )
-                    ],
-                )
-            ),
+        # for res in self.pkg["resources"]:
+        #     self.data.add_identificationInfo(
+        #         mri.MD_DataIdentification(
+        #             h.citation(
+        #                 res["name"], presentationForm="documentDigital"
+        #             ),
+        #             h.cs(res["description"]),
+        #             resourceFormat=[
+        #                 mrd.MD_Format(
+        #                     cit.CI_Citation(res["format"]),
+        #                     res.get("version"),
+        #                 )
+        #             ],
+        #         )
+        #     )
 
     def _add_content(self):
         # mcc.Abstract_ContentInformation

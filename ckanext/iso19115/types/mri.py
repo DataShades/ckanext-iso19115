@@ -3,10 +3,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
-from .base import Codelist
+from .base import Codelist, Atomic
 
 if TYPE_CHECKING:
     from . import *
+
+
+@dataclass
+class MD_TopicCategoryCode(Atomic):
+    value: str
 
 
 @dataclass

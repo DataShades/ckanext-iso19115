@@ -69,11 +69,6 @@ class MD_SpatialRepresentationTypeCode(Codelist):
 
 
 @dataclass
-class MD_TopicCategoryCode(Codelist):
-    pass
-
-
-@dataclass
 class Abstract_ResourceDescription:
     citation: cit.CI_Citation
     abstract: gco.CharacterString
@@ -94,7 +89,7 @@ class Abstract_ResourceDescription:
     temporalResolution: Optional[list[gco.TM_PeriodDuration]] = field(
         default_factory=list
     )
-    topicCategory: Optional[list[Codelist[mcc.MD_TopicCategoryCode]]] = field(
+    topicCategory: Optional[list[Codelist[mri.MD_TopicCategoryCode]]] = field(
         default_factory=list
     )
     extent: Optional[list[gex.EX_Extent]] = field(default_factory=list)
