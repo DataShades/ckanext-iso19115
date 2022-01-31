@@ -208,7 +208,7 @@ def codelist_options(name: str) -> list[CodeListValue]:
         CodeListValue(
             code.find(
                 "cat:identifier/gco:ScopedName", namespaces=namespaces
-            ).text,
+            ).text.strip(),
             code.find(
                 "cat:definition/gco:CharacterString", namespaces=namespaces
             ).text,

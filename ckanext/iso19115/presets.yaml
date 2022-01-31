@@ -1,10 +1,17 @@
 scheming_presets_version: 2
 about: ~
 about_url: ~
-_preset_select: &preset_select
-  form_snippet: select.html
-  display_snippet: select.html
-  validators: scheming_required scheming_choices
+_presets:
+  - &preset_select
+    form_snippet: select.html
+    display_snippet: select.html
+    validators: scheming_required scheming_choices
+  - &preset_multiple_select
+    form_snippet: multiple_select.html
+    display_snippet: multiple_choice.html
+    validators: scheming_multiple_choice
+    output_validators: scheming_multiple_choice_output
+
 
 presets:
   - preset_name: iso19115_vector_spatial_representation
@@ -109,6 +116,6 @@ presets:
 
   - preset_name: iso19115_topic_field
     values:
-      <<: *preset_select
+      <<: *preset_multiple_select
       choices_helper: iso19115_codelist_as_options
       iso19115_source: MD_TopicCategoryCode
