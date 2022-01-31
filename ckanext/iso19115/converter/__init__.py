@@ -184,7 +184,7 @@ class Converter:
         citation: cit.CI_Citation = h.citation(
             self.pkg["title"], identifier=h.id(self.pkg["id"])
         )
-        kw = [h.keyword(t) for t in self.pkg["tags"]]
+        kw = [h.keyword(t if isinstance(t, str) else t['name']) for t in self.pkg["tags"]]
 
         ident: mri.MD_DataIdentification = mri.MD_DataIdentification(
             citation,
