@@ -42,7 +42,12 @@ class Iso19115Plugin(plugins.SingletonPlugin):
     def register_metaexport_format(self):
         from . import formatter
 
-        return dict(iso19115=formatter.Iso19115())
+        return dict(
+            iso19115=formatter.Iso19115(),
+            iso19115_html=formatter.Iso19115Html(),
+            iso19115_pdf=formatter.Iso19115Pdf(),
+
+        )
 
     def register_data_extractors(self, formatters):
         formatters.get("iso19115").set_data_extractor(_data_extractor)

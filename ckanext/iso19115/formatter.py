@@ -4,6 +4,8 @@ from __future__ import annotations
 from typing import Any
 import xmlschema
 from ckanext.metaexport.formatters import Format
+from ckanext.metaexport.formatters.pdf_format import PDFFormat
+from ckanext.metaexport.formatters.html_format import HTMLFormat
 from .utils import get_builder, ns
 
 
@@ -15,3 +17,10 @@ class Iso19115(Format):
         el: Any = builder.build(extra_vars)
         xml = xmlschema.etree_tostring(el, namespaces=ns)
         return xml
+
+
+class Iso19115Html(HTMLFormat):
+    pass
+
+class Iso19115Pdf(PDFFormat):
+    pass
