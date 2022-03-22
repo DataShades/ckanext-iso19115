@@ -3,8 +3,8 @@ from __future__ import annotations
 import functools
 import re
 import logging
-from typing import Any, Optional, TypedDict, Union
-
+from typing import Any, Optional, Union
+from typing_extensions import TypedDict
 import pycountry
 import ckan.plugins.toolkit as tk
 from . import utils
@@ -12,6 +12,9 @@ from . import utils
 _swap_case = re.compile("(?<=[a-z])(?=[A-Z])")
 
 CONFIG_LANGUAGES = "ckanext.iso19115.metadata.supported_languages"
+CONFIG_ALLOWED = "ckanext.iso19115.options.allowed"
+
+DEFAULT_ALLOWED = []
 DEFAULT_LANGUAGES = "eng"
 
 log = logging.getLogger(__name__)
@@ -71,8 +74,16 @@ def _get_implementations(el: str) -> list[AnnotatedOption]:
 
 
 def implementations(field: dict[str, Any]):
-    return _get_implementations(field["iso19115_source"])
+    source = field["iso19115_source"]
+    allowed = set(tk.aslist(tk.config.get(CONFIG_ALLOWED + "." + source.replace(":", "."), DEFAULT_ALLOWED)))
+    options = _get_implementations(source)
 
+    if allowed:
+        options = [
+            o for o in options
+            if o["value"] in allowed
+        ]
+    return options
 
 @functools.lru_cache()
 def _get_codelist(name: str) -> list[AnnotatedOption]:
@@ -87,8 +98,15 @@ def _get_codelist(name: str) -> list[AnnotatedOption]:
 
 
 def codelist(field: dict[str, Any]):
-    return _get_codelist(field["iso19115_source"])
-
+    source = field["iso19115_source"]
+    allowed = set(tk.aslist(tk.config.get(CONFIG_ALLOWED + "." + source.replace(":", "."), DEFAULT_ALLOWED)))
+    options = _get_codelist(source)
+    if allowed:
+        options = [
+            o for o in options
+            if o["value"] in allowed
+        ]
+    return options
 
 def _uncamelize(v):
     return _swap_case.sub(" ", v)

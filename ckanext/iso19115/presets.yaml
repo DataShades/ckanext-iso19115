@@ -27,9 +27,23 @@ presets:
             iso19115_source: MD_GeometricObjectTypeCode
             form_attrs:
               data-module: autocomplete
+            help_text: >
+              Name of point or vector objects used to locate zero-, one-, two-,
+              or three-dimensional spatial locations in the dataset
+
+              <h4>Complex</h4> set of geometric primitives such that their boundaries can be represented as a union of other primitives
+              <h4>Composite</h4> connected set of curves, solids or surfaces
+              <h4>Curve</h4> bounded, 1-dimensional geometric primitive, representing the continuous image of a line
+              <h4>Point</h4> zero-dimensional geometric primitive, representing a position but not having an extent
+              <h4>Solid</h4> bounded, connected 3-dimensional geometric primitive, representing the continuous image of a region of space
+              <h4>Surface</h4> bounded, connected 2-dimensional geometric primitive, representing the continuous image of a region of a plane
+
           - field_name: count
             label: Object count
             validators: ignore_empty natural_number_validator
+            help_text: >
+              Total number of the point or vector object type occurring in the
+              dataset
 
   - preset_name: iso19115_contact
     values:
