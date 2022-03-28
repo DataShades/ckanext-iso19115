@@ -224,7 +224,7 @@ class Converter:
         mdq.DQ_DataQuality
         for dq in self.pkg.get("data_quality", []):
             result = mdq.DQ_DescriptiveResult(
-                statement=h.cs(dq["details"] or "xx")
+                statement=h.cs(dq.get("details") or "...")
             )
             if "date" in dq:
                 result.dateTime = h.date(dq["date"], True)
