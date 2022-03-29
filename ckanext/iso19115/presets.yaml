@@ -28,15 +28,16 @@ presets:
             form_attrs:
               data-module: autocomplete
             help_text: >
-              Name of point or vector objects used to locate zero-, one-, two-,
-              or three-dimensional spatial locations in the dataset
-
               <h4>Complex</h4> set of geometric primitives such that their boundaries can be represented as a union of other primitives
               <h4>Composite</h4> connected set of curves, solids or surfaces
               <h4>Curve</h4> bounded, 1-dimensional geometric primitive, representing the continuous image of a line
               <h4>Point</h4> zero-dimensional geometric primitive, representing a position but not having an extent
               <h4>Solid</h4> bounded, connected 3-dimensional geometric primitive, representing the continuous image of a region of space
               <h4>Surface</h4> bounded, connected 2-dimensional geometric primitive, representing the continuous image of a region of a plane
+
+            extra_help_text: >
+              Name of point and vector spatial objects used to locate zero-,
+              one-, and two-dimensional spatial locations in the dataset
 
           - field_name: count
             label: Object count
@@ -91,6 +92,14 @@ presets:
         repeating_subfields:
           - field_name: type
             label: Report Type
+            help_text: >
+                <h4>Completeness Commission</h4> Excess data in the dataset, as described by the scope. For example, the Atlas of NSW Wildlife contains some records for Victoria and Queensland.
+                <h4>Conceptual Consistency</h4> Adherence to the conceptual schema rules. Inconsistencies could include for example, invalid placement of features within a defined tolerance, duplication of features or invalid overlap of features.
+                <h4>Completeness Omission</h4> Data absent from the dataset, as described by the scope.
+                <h4>Absolute external positional accuracy</h4> Accuracy of the position features i.e. closeness of reported coordinate values to values accepted as being true.
+                <h4>Topological consistency</h4> Correctness of the explicitly encoded topological characteristics of the dataset, as described by the scope.
+                <h4>Non quantitative attribute accuracy</h4> Attribute correctness.
+
             required: true
             preset: select
             choices_helper: iso19115_implementation_as_options
@@ -99,6 +108,8 @@ presets:
             label: Date
             preset: date
             required: false
+            help_text: Date when the report was generated
+
           - field_name: details
             label: Details
             form_snippet: textarea.html
