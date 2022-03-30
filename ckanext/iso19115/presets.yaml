@@ -25,8 +25,11 @@ presets:
             required: true
             choices_helper: iso19115_codelist_as_options
             iso19115_source: MD_GeometricObjectTypeCode
+            form_include_blank_choice: true
             form_attrs:
-              data-module: autocomplete
+              data-module: selectpicker
+              data-live-search: true
+              data-dropup-auto: 0
             help_text: >
               <h4>Complex</h4> set of geometric primitives such that their boundaries can be represented as a union of other primitives
               <h4>Composite</h4> connected set of curves, solids or surfaces
@@ -103,7 +106,13 @@ presets:
             required: true
             preset: select
             choices_helper: iso19115_implementation_as_options
+            form_include_blank_choice: true
+            form_attrs:
+              data-module: selectpicker
+              data-live-search: true
+              data-dropup-auto: 0
             iso19115_source: "mdq:AbstractDQ_Element"
+
           - field_name: date
             label: Date
             preset: date
