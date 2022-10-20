@@ -15,6 +15,8 @@ from lxml import isoschematron
 from . import builder
 from .types.base import CodeListValue
 
+CONFIG_CACHE_DIR = "ckanext.iso19115.misc.cache_dir"
+
 DEFAULT_XSD = "mdb2"
 _root = Path(__file__).parent
 
@@ -78,6 +80,12 @@ for f in _schematron_mapping.values():
     ), f"Schema {f} does not exists. Have you extracted namespaces.zip?"
 
 
+def _get_cache_path(name):
+    cache_dir = Path(tk.config.get(CONFIG_CACHE_DIR, _root))
+    return cache_dir / f"{name}.pickle"
+
+
+
 def lookup(root: str, schema: xmlschema.XMLSchema):
     qualified_root = root
 
@@ -104,7 +112,7 @@ def lookup(root: str, schema: xmlschema.XMLSchema):
 
 
 def _get_schema(name: str, rebuild: bool = False) -> xmlschema.XMLSchema:
-    cache = _root / f"{name}.pickle"
+    cache = _get_cache_path(name)
     if not cache.is_file() or rebuild:
         schema = xmlschema.XMLSchema(
             str(_schema_mapping[name]), validation="lax"

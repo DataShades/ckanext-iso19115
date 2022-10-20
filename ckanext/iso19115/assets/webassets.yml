@@ -2,7 +2,7 @@ iso19115-js:
   filter: rjsmin
   output: ckanext-iso19115/%(version)s-iso19115.js
   contents:
-    - script.js
+    - iso19115-script.js
   extra:
     preload:
       - base/main
@@ -12,4 +12,4 @@ iso19115-css:
   filter: cssrewrite
   output: ckanext-iso19115/%(version)s-iso19115.css
   contents:
-    - style.css
+    - iso19115-style.css
