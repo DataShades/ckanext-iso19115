@@ -117,7 +117,7 @@ class Converter:
 
     def _add_dates(self):
         cit.CI_Date
-        has_creation = False
+        has_creation = True
 
         for date in self.pkg.get("date_info", []):
             self.data.add_dateInfo(
@@ -127,12 +127,10 @@ class Converter:
             )
             if date["type"] == "creation":
                 has_creation = True
-
         if not has_creation:
             creation = self.pkg["metadata_created"]
-
             self.data.add_dateInfo(
-                cit.CI_Date(h.date(creation), cit.CI_DateTypeCode("creation"))
+                cit.CI_Date(h.date(creation), cit.CI_DateTypeCode(creation))
             )
 
     def _add_standard(self):
