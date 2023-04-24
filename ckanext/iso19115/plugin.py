@@ -9,7 +9,12 @@ except ImportError:
 from . import cli, interfaces, views, helpers
 from .logic import action
 
+try:
+    config_declarations = tk.blanket.config_declarations
+except AttributeError:
+    config_declarations = lambda cls: cls
 
+@config_declarations
 class Iso19115Plugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.IClick)

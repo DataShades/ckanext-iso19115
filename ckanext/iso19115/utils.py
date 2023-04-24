@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import logging
 import functools
 import pickle
+import tempfile
 from io import BytesIO
 from pathlib import Path
 from typing import Any, Container, Iterable, Optional, cast
@@ -15,10 +17,13 @@ from lxml import isoschematron
 from . import builder
 from .types.base import CodeListValue
 
+log = logging.getLogger(__name__)
+
 CONFIG_CACHE_DIR = "ckanext.iso19115.misc.cache_dir"
 
 DEFAULT_XSD = "mdb2"
 _root = Path(__file__).parent
+_tempdir = tempfile.mkdtemp(prefix="iso19115")
 
 _codelists = _root / "namespaces/19115/resources/Codelists/cat/codelists.xml"
 
@@ -81,7 +86,8 @@ for f in _schematron_mapping.values():
 
 
 def _get_cache_path(name):
-    cache_dir = Path(tk.config.get(CONFIG_CACHE_DIR, _root))
+    cache_dir = Path(tk.config.get(CONFIG_CACHE_DIR) or _tempdir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir / f"{name}.pickle"
 
 
@@ -114,6 +120,7 @@ def lookup(root: str, schema: xmlschema.XMLSchema):
 def _get_schema(name: str, rebuild: bool = False) -> xmlschema.XMLSchema:
     cache = _get_cache_path(name)
     if not cache.is_file() or rebuild:
+        log.info("Building the cache at %s...", cache)
         schema = xmlschema.XMLSchema(
             str(_schema_mapping[name]), validation="lax"
         )

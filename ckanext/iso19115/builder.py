@@ -88,7 +88,6 @@ class Builder:
         ns = {f"xmlns:{k}": v for k, v in utils.ns.items()}
         if len(data) < 2 or not isinstance(data[1], dict):
             data[1:1] = [{}]
-        # breakpoint()
         data[1].update(ns)
 
         el = self.root.encode(data, converter=xmlschema.JsonMLConverter)

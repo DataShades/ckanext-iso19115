@@ -1,0 +1,14 @@
+version: 1
+groups:
+  - annotation: ckanext-iso19115
+    options:
+      - key: ckanext.iso19115.metadata.supported_languages
+        type: list
+        default:
+          - eng
+
+      - key: ckanext.iso19115.options.allowed.<type>
+        type: dynamic
+
+      - key: ckanext.iso19115.misc.cache_dir
+        placeholder: /tmp
