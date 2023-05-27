@@ -123,9 +123,7 @@ class Builder:
         max_depth: int = 0,
         annotated: bool = False,
     ):
-        tree = DfsTree(
-            self.root, skip_optional, qualified, max_depth, annotated
-        )
+        tree = DfsTree(self.root, skip_optional, qualified, max_depth, annotated)
         if fmt == "overview":
             print(tree)
         elif fmt == "dataclass":
@@ -232,13 +230,10 @@ class DfsTree(Tree):
 
         with node.visit() as children:
             for child in children:
-
                 yield from self._yield_from_node(child)
 
     def __str__(self):
-        return "\n".join(
-            n.into_indent(self.qualified, self.annotated) for n in self
-        )
+        return "\n".join(n.into_indent(self.qualified, self.annotated) for n in self)
 
 
 def make_node(node: XsdType) -> BaseNode:
@@ -552,7 +547,6 @@ class AtomicNode(BaseNode):
 
 class ElementNode(BaseNode):
     def __init__(self, node: XsdElement):
-
         if node.abstract:
             children = self._resolve_substitutions(node)
         else:

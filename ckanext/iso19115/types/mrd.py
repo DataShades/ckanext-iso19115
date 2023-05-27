@@ -17,15 +17,13 @@ class MD_MediumFormatCode(Codelist):
 @dataclass
 class MD_Distributor:
     distributorContact: cit.CI_Responsibility
-    distributionOrderProcess: Optional[
-        list[mrd.MD_StandardOrderProcess]
-    ] = field(default_factory=list)
-    distributorFormat: Optional[list[mrd.MD_Format]] = field(
+    distributionOrderProcess: Optional[list[mrd.MD_StandardOrderProcess]] = field(
         default_factory=list
     )
-    distributorTransferOptions: Optional[
-        list[mrd.MD_DigitalTransferOptions]
-    ] = field(default_factory=list)
+    distributorFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
+    distributorTransferOptions: Optional[list[mrd.MD_DigitalTransferOptions]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -35,9 +33,7 @@ class MD_DigitalTransferOptions:
     onLine: Optional[list[cit.CI_OnlineResource]] = field(default_factory=list)
     offLine: Optional[list[mrd.MD_Medium]] = field(default_factory=list)
     transferFrequency: Optional[gco.TM_PeriodDuration] = None
-    distributionFormat: Optional[list[mrd.MD_Format]] = field(
-        default_factory=list
-    )
+    distributionFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
 
 
 @dataclass
@@ -59,9 +55,7 @@ class MD_Format:
     amendmentNumber: Optional[gco.CharacterString] = None
     fileDecompressionTechnique: Optional[gco.CharacterString] = None
     medium: Optional[list[mrd.MD_Medium]] = field(default_factory=list)
-    formatDistributor: Optional[list[mrd.MD_Distributor]] = field(
-        default_factory=list
-    )
+    formatDistributor: Optional[list[mrd.MD_Distributor]] = field(default_factory=list)
 
 
 @dataclass
@@ -77,12 +71,8 @@ class MD_StandardOrderProcess:
 @dataclass
 class MD_Distribution:
     description: Optional[gco.CharacterString] = None
-    distributionFormat: Optional[list[mrd.MD_Format]] = field(
-        default_factory=list
-    )
-    distributor: Optional[list[mrd.MD_Distributor]] = field(
-        default_factory=list
-    )
+    distributionFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
+    distributor: Optional[list[mrd.MD_Distributor]] = field(default_factory=list)
     transferOptions: Optional[list[mrd.MD_DigitalTransferOptions]] = field(
         default_factory=list
     )

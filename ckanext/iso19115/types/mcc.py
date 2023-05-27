@@ -33,12 +33,8 @@ class MD_BrowseGraphic:
     fileName: gco.CharacterString
     fileDescription: Optional[gco.CharacterString] = None
     fileType: Optional[gco.CharacterString] = None
-    imageConstraints: Optional[list[mco.MD_Constraints]] = field(
-        default_factory=list
-    )
-    linkage: Optional[list[cit.CI_OnlineResource]] = field(
-        default_factory=list
-    )
+    imageConstraints: Optional[list[mco.MD_Constraints]] = field(default_factory=list)
+    linkage: Optional[list[cit.CI_OnlineResource]] = field(default_factory=list)
 
 
 @dataclass
@@ -74,18 +70,12 @@ class Abstract_ResourceDescription:
     abstract: gco.CharacterString
     purpose: Optional[gco.CharacterString] = None
     credit: Optional[list[gco.CharacterString]] = field(default_factory=list)
-    status: Optional[list[Codelist[mcc.MD_ProgressCode]]] = field(
-        default_factory=list
-    )
-    pointOfContact: Optional[list[cit.CI_Responsibility]] = field(
-        default_factory=list
-    )
+    status: Optional[list[Codelist[mcc.MD_ProgressCode]]] = field(default_factory=list)
+    pointOfContact: Optional[list[cit.CI_Responsibility]] = field(default_factory=list)
     spatialRepresentationType: Optional[
         list[Codelist[mcc.MD_SpatialRepresentationTypeCode]]
     ] = field(default_factory=list)
-    spatialResolution: Optional[list[mri.MD_Resolution]] = field(
-        default_factory=list
-    )
+    spatialResolution: Optional[list[mri.MD_Resolution]] = field(default_factory=list)
     temporalResolution: Optional[list[gco.TM_PeriodDuration]] = field(
         default_factory=list
     )
@@ -93,23 +83,15 @@ class Abstract_ResourceDescription:
         default_factory=list
     )
     extent: Optional[list[gex.EX_Extent]] = field(default_factory=list)
-    additionalDocumentation: list[cit.CI_Citation] = field(
-        default_factory=list
-    )
+    additionalDocumentation: list[cit.CI_Citation] = field(default_factory=list)
     processingLevel: Optional[mcc.MD_Identifier] = None
     resourceMaintenance: Optional[list[mmi.MD_MaintenanceInformation]] = field(
         default_factory=list
     )
-    graphicOverview: Optional[list[mcc.MD_BrowseGraphic]] = field(
-        default_factory=list
-    )
+    graphicOverview: Optional[list[mcc.MD_BrowseGraphic]] = field(default_factory=list)
     resourceFormat: Optional[list[mrd.MD_Format]] = field(default_factory=list)
-    descriptiveKeywords: Optional[list[mri.MD_Keywords]] = field(
-        default_factory=list
-    )
-    resourceSpecificUsage: Optional[list[mri.MD_Usage]] = field(
-        default_factory=list
-    )
+    descriptiveKeywords: Optional[list[mri.MD_Keywords]] = field(default_factory=list)
+    resourceSpecificUsage: Optional[list[mri.MD_Usage]] = field(default_factory=list)
     resourceConstraints: Optional[list[mco.MD_Constraints]] = field(
         default_factory=list
     )

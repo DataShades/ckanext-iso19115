@@ -43,9 +43,7 @@ class CI_Address:
     administrativeArea: Optional[gco.CharacterString] = None
     postalCode: Optional[gco.CharacterString] = None
     country: Optional[gco.CharacterString] = None
-    electronicMailAddress: list[gco.CharacterString] = field(
-        default_factory=list
-    )
+    electronicMailAddress: list[gco.CharacterString] = field(default_factory=list)
 
 
 @dataclass
@@ -97,9 +95,7 @@ class CI_Series:
 class AbstractCI_Party:
     name: gco.CharacterString = None
     contactInfo: Optional[list[CI_Contact]] = field(default_factory=list)
-    partyIdentifier: Optional[list[mcc.MD_Identifier]] = field(
-        default_factory=list
-    )
+    partyIdentifier: Optional[list[mcc.MD_Identifier]] = field(default_factory=list)
 
 
 @dataclass
@@ -116,9 +112,7 @@ class CI_Organisation(AbstractCI_Party):
 @dataclass
 class CI_Citation:
     title: gco.CharacterString
-    alternateTitle: Optional[list[gco.CharacterString]] = field(
-        default_factory=list
-    )
+    alternateTitle: Optional[list[gco.CharacterString]] = field(default_factory=list)
     date: Optional[list[CI_Date]] = field(default_factory=list)
     edition: Optional[gco.CharacterString] = None
     editionDate: Optional[gco.DateTime] = None
@@ -126,16 +120,14 @@ class CI_Citation:
     citedResponsibleParty: Optional[list[CI_Responsibility]] = field(
         default_factory=list
     )
-    presentationForm: Optional[
-        list[Codelist[cit.CI_PresentationFormCode]]
-    ] = field(default_factory=list)
+    presentationForm: Optional[list[Codelist[cit.CI_PresentationFormCode]]] = field(
+        default_factory=list
+    )
     series: Optional[CI_Series] = None
     otherCitationDetails: Optional[list[gco.CharacterString]] = field(
         default_factory=list
     )
     ISBN: Optional[gco.CharacterString] = None
     ISSN: Optional[gco.CharacterString] = None
-    onlineResource: Optional[list[CI_OnlineResource]] = field(
-        default_factory=list
-    )
+    onlineResource: Optional[list[CI_OnlineResource]] = field(default_factory=list)
     graphic: Optional[list[mcc.MD_BrowseGraphic]] = field(default_factory=list)

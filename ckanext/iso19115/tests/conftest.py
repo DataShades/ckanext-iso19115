@@ -14,9 +14,7 @@ def examples():
 @pytest.fixture()
 def example(examples, request):
     name = next(
-        m.args[0]
-        for m in request.node.iter_markers()
-        if m.name == "xml_example"
+        m.args[0] for m in request.node.iter_markers() if m.name == "xml_example"
     )
     path = examples / name
     return path.open("rb").read()

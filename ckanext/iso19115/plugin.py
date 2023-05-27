@@ -14,6 +14,7 @@ try:
 except AttributeError:
     config_declarations = lambda cls: cls
 
+
 @config_declarations
 class Iso19115Plugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IActions)
@@ -51,7 +52,6 @@ class Iso19115Plugin(plugins.SingletonPlugin):
             iso19115=formatter.Iso19115(),
             iso19115_html=formatter.Iso19115Html(),
             iso19115_pdf=formatter.Iso19115Pdf(),
-
         )
 
     def register_data_extractors(self, formatters):

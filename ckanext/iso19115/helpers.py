@@ -19,6 +19,7 @@ DEFAULT_LANGUAGES = "eng"
 
 log = logging.getLogger(__name__)
 
+
 def get_helpers():
     return {
         "iso19115_implementation_as_options": implementations,
@@ -42,9 +43,7 @@ def languages(field: dict[str, Any]):
 def _get_languages() -> list[AnnotatedOption]:
     supported = tk.aslist(tk.config.get(CONFIG_LANGUAGES, DEFAULT_LANGUAGES))
     languages = (
-        map(pycountry.languages.lookup, supported)
-        if supported
-        else pycountry.languages
+        map(pycountry.languages.lookup, supported) if supported else pycountry.languages
     )
 
     return [
@@ -65,9 +64,7 @@ def _get_implementations(el: str) -> list[AnnotatedOption]:
             continue
         label = _uncamelize(name.split(":")[-1].replace("_", " "))
         options.append(
-            AnnotatedOption(
-                value=name, label=label, annotation=impl.annotation()
-            )
+            AnnotatedOption(value=name, label=label, annotation=impl.annotation())
         )
 
     return options
@@ -75,15 +72,19 @@ def _get_implementations(el: str) -> list[AnnotatedOption]:
 
 def implementations(field: dict[str, Any]):
     source = field["iso19115_source"]
-    allowed = set(tk.aslist(tk.config.get(CONFIG_ALLOWED + "." + source.replace(":", "."), DEFAULT_ALLOWED)))
+    allowed = set(
+        tk.aslist(
+            tk.config.get(
+                CONFIG_ALLOWED + "." + source.replace(":", "."), DEFAULT_ALLOWED
+            )
+        )
+    )
     options = _get_implementations(source)
 
     if allowed:
-        options = [
-            o for o in options
-            if o["value"] in allowed
-        ]
+        options = [o for o in options if o["value"] in allowed]
     return options
+
 
 @functools.lru_cache()
 def _get_codelist(name: str) -> list[AnnotatedOption]:
@@ -99,20 +100,26 @@ def _get_codelist(name: str) -> list[AnnotatedOption]:
 
 def codelist(field: dict[str, Any]):
     source = field["iso19115_source"]
-    allowed = set(tk.aslist(tk.config.get(CONFIG_ALLOWED + "." + source.replace(":", "."), DEFAULT_ALLOWED)))
+    allowed = set(
+        tk.aslist(
+            tk.config.get(
+                CONFIG_ALLOWED + "." + source.replace(":", "."), DEFAULT_ALLOWED
+            )
+        )
+    )
     options = _get_codelist(source)
     if allowed:
-        options = [
-            o for o in options
-            if o["value"] in allowed
-        ]
+        options = [o for o in options if o["value"] in allowed]
     return options
+
 
 def _uncamelize(v):
     return _swap_case.sub(" ", v)
 
 
-def option_label(type_: str, field: Union[str, list[str]], value: str, entity: str = "dataset"):
+def option_label(
+    type_: str, field: Union[str, list[str]], value: str, entity: str = "dataset"
+):
     schema = tk.h.scheming_get_schema(entity, type_)
     if not schema:
         log.warning("Schema for %s type %s is not defined", entity, type_)
@@ -120,7 +127,7 @@ def option_label(type_: str, field: Union[str, list[str]], value: str, entity: s
 
     if isinstance(field, str):
         field = [field]
-    fields = schema['dataset_fields']
+    fields = schema["dataset_fields"]
     field_data = {}
 
     for step in field:
@@ -129,7 +136,7 @@ def option_label(type_: str, field: Union[str, list[str]], value: str, entity: s
             log.warning("Field %s is not defined inside %s schema", field, type_)
             return value
         if "repeating_subfields" in field_data:
-            fields = field_data['repeating_subfields']
+            fields = field_data["repeating_subfields"]
 
     choices = tk.h.scheming_field_choices(field_data)
     if not choices:

@@ -42,10 +42,6 @@ class SV_ServiceIdentification(Abstract_ResourceDescription):
     operatedDataset: list[cit.CI_Citation] = field(default_factory=list)
     profile: list[cit.CI_Citation] = field(default_factory=list)
     serviceStandard: list[cit.CI_Citation] = field(default_factory=list)
-    containsOperations: list[SV_OperationMetadata] = field(
-        default_factory=list
-    )
+    containsOperations: list[SV_OperationMetadata] = field(default_factory=list)
     operatesOn: list[mri.MD_DataIdentification] = field(default_factory=list)
-    containsChain: list[SV_OperationChainMetadata] = field(
-        default_factory=list
-    )
+    containsChain: list[SV_OperationChainMetadata] = field(default_factory=list)

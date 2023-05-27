@@ -16,9 +16,7 @@ class TestConverter:
     def test_minimal_xml(self, faker):
         el: t.mdb.MD_Metadata = h.make("mdb:MD_Metadata")
         dt1 = faker.date_time()
-        el.add_dateInfo(
-            t.cit.CI_Date(h.date(dt1), t.cit.CI_DateTypeCode("creation"))
-        )
+        el.add_dateInfo(t.cit.CI_Date(h.date(dt1), t.cit.CI_DateTypeCode("creation")))
         data = c.jml(el)
         builder = u.get_builder("mdb:MD_Metadata")
         assert builder.build(data)
@@ -31,9 +29,7 @@ class TestConverter:
                 t.cit.CI_DateTypeCode("creation"),
             )
         )
-        el.add_contact(
-            h.responsibility("author", t.cit.CI_Individual(h.cs("author")))
-        )
+        el.add_contact(h.responsibility("author", t.cit.CI_Individual(h.cs("author"))))
 
         builder = u.get_builder("mdb:MD_Metadata")
         data = c.jml(el)

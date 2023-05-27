@@ -64,9 +64,7 @@ class Converter:
 
     def _add_identifier(self):
         mcc.MD_Identifier
-        identifier: mcc.MD_Identifier = h.id(
-            self.pkg["id"], codeSpace="urn:uuid"
-        )
+        identifier: mcc.MD_Identifier = h.id(self.pkg["id"], codeSpace="urn:uuid")
         self.data.metadataIdentifier = identifier
 
     def _add_default_locale(self):
@@ -91,7 +89,6 @@ class Converter:
     def _add_contacts(self):
         cit.CI_Responsibility
         for contact in self.pkg.get("contact", []):
-
             ind = cit.CI_Individual(
                 name=h.cs(contact.get("inidvidual")),
                 positionName=h.cs(contact.get("position")),
@@ -121,9 +118,7 @@ class Converter:
 
         for date in self.pkg.get("date_info", []):
             self.data.add_dateInfo(
-                cit.CI_Date(
-                    h.date(date["date"]), cit.CI_DateTypeCode(date["type"])
-                )
+                cit.CI_Date(h.date(date["date"]), cit.CI_DateTypeCode(date["type"]))
             )
             if date["type"] == "creation":
                 has_creation = True
@@ -186,7 +181,9 @@ class Converter:
         citation: cit.CI_Citation = h.citation(
             self.pkg["title"], identifier=h.id(self.pkg["id"])
         )
-        kw = [h.keyword(t if isinstance(t, str) else t['name']) for t in self.pkg["tags"]]
+        kw = [
+            h.keyword(t if isinstance(t, str) else t["name"]) for t in self.pkg["tags"]
+        ]
 
         ident: mri.MD_DataIdentification = mri.MD_DataIdentification(
             citation,
@@ -231,9 +228,7 @@ class Converter:
             if "date" in dq:
                 result.dateTime = h.date(dq["date"], True)
 
-            report: mdq.AbstractDQ_Element = h.make(
-                dq["type"], result=[result]
-            )
+            report: mdq.AbstractDQ_Element = h.make(dq["type"], result=[result])
 
             self.data.dataQualityInfo.append(
                 mdq.DQ_DataQuality(
@@ -299,9 +294,7 @@ def _default_as_jml(el: DataClass, ns: str):
                 elif is_codelist(field):
                     element = h.codelist(field, element)
 
-            content = (
-                jml(element) if dataclasses.is_dataclass(element) else element
-            )
+            content = jml(element) if dataclasses.is_dataclass(element) else element
             if content != []:
                 child.append(content)
             child.refine_attributes()

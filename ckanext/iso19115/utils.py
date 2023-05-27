@@ -91,7 +91,6 @@ def _get_cache_path(name):
     return cache_dir / f"{name}.pickle"
 
 
-
 def lookup(root: str, schema: xmlschema.XMLSchema):
     qualified_root = root
 
@@ -121,9 +120,7 @@ def _get_schema(name: str, rebuild: bool = False) -> xmlschema.XMLSchema:
     cache = _get_cache_path(name)
     if not cache.is_file() or rebuild:
         log.info("Building the cache at %s...", cache)
-        schema = xmlschema.XMLSchema(
-            str(_schema_mapping[name]), validation="lax"
-        )
+        schema = xmlschema.XMLSchema(str(_schema_mapping[name]), validation="lax")
         with cache.open("wb") as dest:
             pickle.dump(schema, dest)
     with cache.open("rb") as src:
@@ -165,18 +162,14 @@ def validate_schematron(content: bytes, schemas: Iterable[str] = frozenset()):
     for name in schemas:
         path = str(_schematron_mapping[name])
         with open(path, "rb") as src:
-            sch = isoschematron.Schematron(
-                ltree.XML(src.read()), store_report=True
-            )
+            sch = isoschematron.Schematron(ltree.XML(src.read()), store_report=True)
         if sch.validate(ltree.XML(content)):
             continue
 
         failed = sch.validation_report.xpath(
             "//*[local-name() = 'failed-assert']/*[text()]"
         )
-        errors.extend(
-            " ".join(l.strip() for l in f.itertext()) for f in failed
-        )
+        errors.extend(" ".join(l.strip() for l in f.itertext()) for f in failed)
     if errors:
         raise tk.ValidationError({"schematron": list(set(errors))})
 
@@ -190,9 +183,7 @@ def validate_codelist(el: xtree.Element, xsd: xmlschema.XMLSchemaBase):
     validOptions = {c.name for c in codelist_options(xsd.local_name)}
     value = el.attrib["codeListValue"]
     if value not in validOptions:
-        reason = (
-            f"{value} is not a valid code. Valid options are: {validOptions}"
-        )
+        reason = f"{value} is not a valid code. Valid options are: {validOptions}"
         raise xmlschema.XMLSchemaValidationError(xsd, el, reason)
 
 
@@ -224,9 +215,7 @@ def codelist_options(name: str) -> list[CodeListValue]:
             code.find(
                 "cat:identifier/gco:ScopedName", namespaces=namespaces
             ).text.strip(),
-            code.find(
-                "cat:definition/gco:CharacterString", namespaces=namespaces
-            ).text,
+            code.find("cat:definition/gco:CharacterString", namespaces=namespaces).text,
         )
         for code in codes
     ]
@@ -248,7 +237,5 @@ def enum_elements(name: str = DEFAULT_XSD) -> dict[str, xmlschema.XsdElement]:
 def enum_values(name: str, schema: str = DEFAULT_XSD) -> Optional[list[Any]]:
     el = enum_elements(schema)[name]
     if el.local_name == name:
-        type_ = cast(
-            xmlschema.validators.simple_types.XsdAtomicRestriction, el.type
-        )
+        type_ = cast(xmlschema.validators.simple_types.XsdAtomicRestriction, el.type)
         return type_.enumeration

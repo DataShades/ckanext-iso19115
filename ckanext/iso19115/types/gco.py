@@ -44,6 +44,7 @@ class CharacterString(Atomic):
 class Real(Atomic):
     value: float
 
+
 @dataclass
 class Decimal(Atomic):
     value: str

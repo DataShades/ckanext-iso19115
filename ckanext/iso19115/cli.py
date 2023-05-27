@@ -32,9 +32,7 @@ def build():
 def build_xml(source):
     content = bytes(source.read(), "utf8")
     b = utils.get_builder("mdb:MD_Metadata")
-    xml = xmlschema.etree_tostring(
-        b.build(json.loads(content)), namespaces=utils.ns
-    )
+    xml = xmlschema.etree_tostring(b.build(json.loads(content)), namespaces=utils.ns)
 
     click.echo(xml)
 
@@ -65,9 +63,7 @@ def build_describe(
 
 @build.command("example")
 @click.option("-r", "--root", default="mdb:MD_Metadata")
-@click.option(
-    "-f", "--format", type=click.Choice(["json", "xml"]), default="json"
-)
+@click.option("-f", "--format", type=click.Choice(["json", "xml"]), default="json")
 @click.option(
     "--seed",
 )

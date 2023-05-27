@@ -90,9 +90,7 @@ def org(name: str, **kwargs) -> cit.CI_Organisation:
     return cit.CI_Organisation(cs(name), **kwargs)
 
 
-def responsibility(
-    role: str, party: cit.AbstractCI_Party
-) -> cit.CI_Responsibility:
+def responsibility(role: str, party: cit.AbstractCI_Party) -> cit.CI_Responsibility:
     return cit.CI_Responsibility(cit.CI_RoleCode(role), party=[party])
 
 

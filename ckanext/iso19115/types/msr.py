@@ -58,6 +58,4 @@ class MD_GridSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
 @dataclass
 class MD_VectorSpatialRepresentation(mcc.Abstract_SpatialRepresentation):
     topologyLevel: Optional[Codelist[MD_TopologyLevelCode]] = None
-    geometricObjects: Optional[list[MD_GeometricObjects]] = field(
-        default_factory=list
-    )
+    geometricObjects: Optional[list[MD_GeometricObjects]] = field(default_factory=list)

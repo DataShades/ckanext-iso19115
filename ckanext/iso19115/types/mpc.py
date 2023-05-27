@@ -9,6 +9,4 @@ if TYPE_CHECKING:
 
 @dataclass
 class MD_PortrayalCatalogueReference:
-    portrayalCatalogueCitation: list[cit.CI_Citation] = field(
-        default_factory=list
-    )
+    portrayalCatalogueCitation: list[cit.CI_Citation] = field(default_factory=list)

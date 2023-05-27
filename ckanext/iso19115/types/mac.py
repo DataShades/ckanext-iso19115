@@ -65,9 +65,7 @@ class MI_Objective:
     )
     function: Optional[list[gco.CharacterString]] = field(default_factory=list)
     extent: Optional[list[gex.EX_Extent]] = field(default_factory=list)
-    sensingInstrument: Optional[list[mac.MI_Instrument]] = field(
-        default_factory=list
-    )
+    sensingInstrument: Optional[list[mac.MI_Instrument]] = field(default_factory=list)
     # pass: Optional[list[mac.MI_PlatformPass]] = field(default_factory=list)
     objectiveOccurence: list[mac.MI_Event] = field(default_factory=list)
 
@@ -98,12 +96,8 @@ class MI_Event:
     sequence: Codelist[mac.MI_SequenceCode]
     time: gco.DateTime
     relatedPass: Optional[mac.MI_PlatformPass] = None
-    relatedSensor: Optional[list[mac.MI_Instrument]] = field(
-        default_factory=list
-    )
-    expectedObjective: Optional[list[mac.MI_Objective]] = field(
-        default_factory=list
-    )
+    relatedSensor: Optional[list[mac.MI_Instrument]] = field(default_factory=list)
+    expectedObjective: Optional[list[mac.MI_Objective]] = field(default_factory=list)
 
 
 @dataclass
@@ -111,9 +105,7 @@ class MI_Platform:
     citation: Optional[list[cit.CI_Citation]] = field(default_factory=list)
     identifier: mcc.MD_Identifier = None
     description: gco.CharacterString = None
-    sponsor: Optional[list[cit.CI_Responsibility]] = field(
-        default_factory=list
-    )
+    sponsor: Optional[list[cit.CI_Responsibility]] = field(default_factory=list)
     instrument: list[mac.MI_Instrument] = field(default_factory=list)
     otherPropertyType: Optional[gco.RecordType] = None
     otherProperty: Optional[gco.Record] = None
@@ -147,9 +139,7 @@ class MI_InstrumentationEvent:
     type: list[Codelist[mac.MI_InstrumentationEventTypeCode]] = field(
         default_factory=list
     )
-    revisionHistory: Optional[list[mac.MI_Revision]] = field(
-        default_factory=list
-    )
+    revisionHistory: Optional[list[mac.MI_Revision]] = field(default_factory=list)
 
 
 @dataclass
@@ -189,15 +179,11 @@ class MI_Operation:
     status: Codelist[mcc.MD_ProgressCode] = None
     type: Optional[Codelist[mac.MI_OperationTypeCode]] = None
     parentOperation: Optional[mac.MI_Operation] = None
-    childOperation: Optional[list[mac.MI_Operation]] = field(
-        default_factory=list
-    )
+    childOperation: Optional[list[mac.MI_Operation]] = field(default_factory=list)
     platform: Optional[list[mac.MI_Platform]] = field(default_factory=list)
     objective: Optional[list[mac.MI_Objective]] = field(default_factory=list)
     plan: Optional[mac.MI_Plan] = None
-    significantEvent: Optional[list[mac.MI_Event]] = field(
-        default_factory=list
-    )
+    significantEvent: Optional[list[mac.MI_Event]] = field(default_factory=list)
     otherPropertyType: Optional[gco.RecordType] = None
     otherProperty: Optional[gco.Record] = None
 

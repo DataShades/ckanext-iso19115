@@ -61,9 +61,7 @@ class MD_Usage:
         default_factory=list
     )
     userDeterminedLimitations: Optional[gco.CharacterString] = None
-    userContactInfo: Optional[list[cit.CI_Responsibility]] = field(
-        default_factory=list
-    )
+    userContactInfo: Optional[list[cit.CI_Responsibility]] = field(default_factory=list)
     response: Optional[list[gco.CharacterString]] = field(default_factory=list)
     additionalDocumentation: Optional[list[cit.CI_Citation]] = field(
         default_factory=list

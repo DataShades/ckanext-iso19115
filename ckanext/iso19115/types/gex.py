@@ -10,9 +10,7 @@ if TYPE_CHECKING:
 @dataclass
 class EX_Extent:
     description: Optional[gco.CharacterString] = None
-    geographicElement: list[AbstractEX_GeographicExtent] = field(
-        default_factory=list
-    )
+    geographicElement: list[AbstractEX_GeographicExtent] = field(default_factory=list)
     temporalElement: list[EX_TemporalExtent] = field(default_factory=list)
     verticalElement: list[EX_VerticalExtent] = field(default_factory=list)
 

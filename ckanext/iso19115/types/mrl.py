@@ -12,9 +12,7 @@ class LI_ProcessStep:
     description: gco.CharacterString
     rationale: Optional[gco.CharacterString] = None
     stepDateTime: Optional[gml.AbstractTimePrimitive] = None
-    processor: Optional[list[cit.CI_Responsibility]] = field(
-        default_factory=list
-    )
+    processor: Optional[list[cit.CI_Responsibility]] = field(default_factory=list)
     reference: Optional[list[cit.CI_Citation]] = field(default_factory=list)
     scope: Optional[mcc.MD_Scope] = None
     source: Optional[list[mrl.LI_Source]] = field(default_factory=list)
@@ -26,13 +24,9 @@ class LI_Source:
     sourceSpatialResolution: Optional[mri.MD_Resolution] = None
     sourceReferenceSystem: Optional[mrs.MD_ReferenceSystem] = None
     sourceCitation: Optional[cit.CI_Citation] = None
-    sourceMetadata: Optional[list[cit.CI_Citation]] = field(
-        default_factory=list
-    )
+    sourceMetadata: Optional[list[cit.CI_Citation]] = field(default_factory=list)
     scope: Optional[mcc.MD_Scope] = None
-    sourceStep: Optional[list[mrl.LI_ProcessStep]] = field(
-        default_factory=list
-    )
+    sourceStep: Optional[list[mrl.LI_ProcessStep]] = field(default_factory=list)
 
 
 @dataclass
@@ -43,6 +37,4 @@ class LI_Lineage:
         default_factory=list
     )
     source: Optional[list[mrl.LI_Source]] = field(default_factory=list)
-    processStep: Optional[list[mrl.LI_ProcessStep]] = field(
-        default_factory=list
-    )
+    processStep: Optional[list[mrl.LI_ProcessStep]] = field(default_factory=list)

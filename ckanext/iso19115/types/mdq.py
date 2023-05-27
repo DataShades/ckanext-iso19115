@@ -25,17 +25,13 @@ class QualityResultFile:
 class DQ_StandaloneQualityReportInformation:
     reportReference: cit.CI_Citation
     abstract: gco.CharacterString
-    elementReport: Optional[list[mdq.AbstractDQ_Element]] = field(
-        default_factory=list
-    )
+    elementReport: Optional[list[mdq.AbstractDQ_Element]] = field(default_factory=list)
 
 
 @dataclass
 class DQ_DataQuality:
     scope: mcc.MD_Scope
-    standaloneQualityReport: Optional[
-        mdq.DQ_StandaloneQualityReportInformation
-    ] = None
+    standaloneQualityReport: Optional[mdq.DQ_StandaloneQualityReportInformation] = None
     report: list[mdq.AbstractDQ_Element] = field(default_factory=list)
 
 
@@ -45,17 +41,13 @@ class DQ_EvaluationMethod:
     evaluationMethodDescription: Optional[gco.CharacterString] = None
     evaluationProcedure: Optional[cit.CI_Citation] = None
     referenceDoc: Optional[list[cit.CI_Citation]] = field(default_factory=list)
-    evaluationMethodType: Optional[
-        Codelist[mdq.DQ_EvaluationMethodTypeCode]
-    ] = None
+    evaluationMethodType: Optional[Codelist[mdq.DQ_EvaluationMethodTypeCode]] = None
 
 
 @dataclass
 class DQ_MeasureReference:
     measureIdentification: Optional[mcc.MD_Identifier] = None
-    nameOfMeasure: Optional[list[gco.CharacterString]] = field(
-        default_factory=list
-    )
+    nameOfMeasure: Optional[list[gco.CharacterString]] = field(default_factory=list)
     measureDescription: Optional[gco.CharacterString] = None
 
 
@@ -66,9 +58,7 @@ class AbstractDQ_Element:
     measure: Optional[mdq.DQ_MeasureReference] = None
     evaluationMethod: Optional[mdq.DQ_EvaluationMethod] = None
     result: list[mdq.AbstractDQ_Result] = field(default_factory=list)
-    derivedElement: Optional[list[mdq.AbstractDQ_Element]] = field(
-        default_factory=list
-    )
+    derivedElement: Optional[list[mdq.AbstractDQ_Element]] = field(default_factory=list)
 
 
 @dataclass
@@ -93,9 +83,7 @@ class DQ_TopologicalConsistency(AbstractDQ_Element):
 
 @dataclass
 class DQ_Confidence(AbstractDQ_Element):
-    relatedElement: Optional[list[mdq.AbstractDQ_Element]] = field(
-        default_factory=list
-    )
+    relatedElement: Optional[list[mdq.AbstractDQ_Element]] = field(default_factory=list)
 
 
 @dataclass
@@ -126,9 +114,7 @@ class DQ_AbsoluteExternalPositionalAccuracy(AbstractDQ_Element):
 @dataclass
 class DQ_Representativity(AbstractDQ_Element):
     pass
-    relatedElement: Optional[list[mdq.AbstractDQ_Element]] = field(
-        default_factory=list
-    )
+    relatedElement: Optional[list[mdq.AbstractDQ_Element]] = field(default_factory=list)
 
 
 @dataclass
@@ -164,9 +150,7 @@ class DQ_CompletenessOmission(AbstractDQ_Element):
 @dataclass
 class DQ_Homogeneity(AbstractDQ_Element):
     pass
-    relatedElement: Optional[list[mdq.AbstractDQ_Element]] = field(
-        default_factory=list
-    )
+    relatedElement: Optional[list[mdq.AbstractDQ_Element]] = field(default_factory=list)
 
 
 @dataclass
@@ -182,9 +166,7 @@ class AbstractDQ_Result:
 
 @dataclass
 class QE_CoverageResult(AbstractDQ_Result):
-    spatialRepresentationType: Codelist[
-        mcc.MD_SpatialRepresentationTypeCode
-    ] = None
+    spatialRepresentationType: Codelist[mcc.MD_SpatialRepresentationTypeCode] = None
     resultFile: mdq.QualityResultFile = None
     resultSpatialRepresentation: mcc.Abstract_SpatialRepresentation = None
     resultContentDescription: mcc.Abstract_ContentInformation = None

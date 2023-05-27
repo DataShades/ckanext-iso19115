@@ -181,16 +181,12 @@ class MultiPoint(AbstractGeometry):
 
 
 @dataclass
-class CompositeSolid(
-    AbstractGeometry, AbstractGeometricPrimitive, AbstractSolid
-):
+class CompositeSolid(AbstractGeometry, AbstractGeometricPrimitive, AbstractSolid):
     solidMember: list[AbstractSolid] = field(default_factory=list)
 
 
 @dataclass
-class Ring(
-    AbstractGeometry, AbstractRing, AbstractGeometricPrimitive, AbstractCurve
-):
+class Ring(AbstractGeometry, AbstractRing, AbstractGeometricPrimitive, AbstractCurve):
     curveMember: list[AbstractCurve] = field(default_factory=list)
 
 
@@ -212,9 +208,7 @@ class MultiGeometry(AbstractGeometry):
 
 
 @dataclass
-class CompositeSurface(
-    AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface
-):
+class CompositeSurface(AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface):
     surfaceMember: list[AbstractSurface] = field(default_factory=list)
 
 
@@ -225,16 +219,12 @@ class Point(AbstractGeometry, AbstractGeometricPrimitive):
 
 
 @dataclass
-class CompositeCurve(
-    AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve
-):
+class CompositeCurve(AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve):
     curveMember: list[AbstractCurve] = field(default_factory=list)
 
 
 @dataclass
-class OrientableCurve(
-    AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve
-):
+class OrientableCurve(AbstractGeometry, AbstractGeometricPrimitive, AbstractCurve):
     baseCurve: list[AbstractCurve] = field(default_factory=list)
 
 
@@ -261,9 +251,7 @@ class GeometricComplex(AbstractGeometry):
 
 
 @dataclass
-class OrientableSurface(
-    AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface
-):
+class OrientableSurface(AbstractGeometry, AbstractGeometricPrimitive, AbstractSurface):
     baseSurface: Optional[AbstractSurface] = None
 
 
@@ -381,9 +369,7 @@ class AbstractCRS:
 
 @dataclass
 class UnitDefinition:
-    metaDataProperty: Optional[list[GenericMetaData]] = field(
-        default_factory=list
-    )
+    metaDataProperty: Optional[list[GenericMetaData]] = field(default_factory=list)
     description: Optional[str] = None
     descriptionReference: Optional[Any] = None
     identifier: Any = None

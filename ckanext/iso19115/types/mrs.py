@@ -16,8 +16,5 @@ class MD_ReferenceSystemTypeCode(Codelist):
 
 @dataclass
 class MD_ReferenceSystem:
-
     referenceSystemIdentifier: Optional[mcc.MD_Identifier] = None
-    referenceSystemType: Optional[
-        Codelist[mrs.MD_ReferenceSystemTypeCode]
-    ] = None
+    referenceSystemType: Optional[Codelist[mrs.MD_ReferenceSystemTypeCode]] = None

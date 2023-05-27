@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
@@ -25,10 +25,7 @@ def get_actions():
 @tk.side_effect_free
 def package_check(context, data_dict):
     pkg = tk.get_action("iso19115_package_show")(context, data_dict)
-    builder = u.get_builder("mdb:MD_Metadata")
-
-    xml = builder.build(pkg)
-    content = bytes(etree_tostring(xml, namespaces=u.ns), "utf8")
+    content = _pkg_into_xml(pkg)
     u.validate_schema(content, validate_codelists=True)
     u.validate_schematron(content)
 
@@ -37,12 +34,16 @@ def package_check(context, data_dict):
 
 @tk.side_effect_free
 def package_show(context, data_dict):
-    implementations = iter(p.PluginImplementations(IIso19115))
-    conv: c.Converter = next(implementations).iso19115_metadata_converter(
-        data_dict
-    )
+    if data_dict.get("format") == "xml":
+        pkg = tk.get_action("iso19115_package_show")(
+            context, {"id": tk.get_or_bust(data_dict, "id")}
+        )
+        return _pkg_into_xml(pkg)
 
     pkg = tk.get_action("package_show")(context, data_dict)
+
+    implementations = iter(p.PluginImplementations(IIso19115))
+    conv: c.Converter = next(implementations).iso19115_metadata_converter(data_dict)
     conv.initialize(pkg)
     conv.process()
     conv.finalize()
@@ -53,3 +54,10 @@ def package_show(context, data_dict):
         raise tk.ValidationError({"schema": [str(e)]})
 
     return result
+
+
+def _pkg_into_xml(pkg: dict[str, Any]):
+    builder = u.get_builder("mdb:MD_Metadata")
+
+    xml = builder.build(pkg)
+    return bytes(etree_tostring(xml, namespaces=u.ns), "utf8")

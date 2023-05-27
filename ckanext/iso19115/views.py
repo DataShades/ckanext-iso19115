@@ -41,6 +41,4 @@ class ValidateView(MethodView):
         return tk.render("iso19115/validate.html", extra_vars)
 
 
-iso19115.add_url_rule(
-    "/-iso19115/validate", view_func=ValidateView.as_view("validate")
-)
+iso19115.add_url_rule("/-iso19115/validate", view_func=ValidateView.as_view("validate"))

@@ -56,7 +56,6 @@ class Codelist(Generic[T]):
         )
 
     def as_jml(self):
-
         ns, name = self._qualify()
         data = JmlRecord(f"{ns}:{name}")
 
