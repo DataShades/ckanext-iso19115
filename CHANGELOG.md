@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/DataShades/ckanext-iso19115/compare/v0.1.0...v0.1.1) (2023-05-27)
+
+
+### Features
+
+* iso19115_package_show accepts format=xml ([322ed4d](https://github.com/DataShades/ckanext-iso19115/commit/322ed4dcfd0bd9417918bf4ccb96ccc7e47a9df0))
+
 ## [0.1.0](https://github.com/DataShades/ckanext-iso19115/compare/v0.0.22...v0.1.0) (2023-04-24)
 
 
