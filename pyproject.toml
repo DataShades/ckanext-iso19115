@@ -1,3 +1,39 @@
+[build-system]
+requires = [ "setuptools",]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ckanext-iso19115"
+version = "0.1.1.post1"
+description = ""
+classifiers = [ "Development Status :: 4 - Beta", "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)", "Programming Language :: Python :: 3.7", "Programming Language :: Python :: 3.8", "Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10",]
+keywords = [ "CKAN",]
+requires-python = ">= 3.7"
+dependencies = [ "xmlschema", "faker", "exrex", "ckanapi", "typing_extensions", "pycountry",]
+authors = [
+    {name = "DataShades", email = "datashades@linkdigital.com.au"},
+    {name = "Sergey Motornyuk", email = "sergey.motornyuk@linkdigital.com.au"},
+]
+maintainers = [
+    {name = "DataShades", email = "datashades@linkdigital.com.au"},
+]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.license]
+text = "AGPL"
+
+[project.urls]
+Homepage = "https://github.com/DataShades/ckanext-iso19115"
+
+[project.entry-points."ckan.plugins"]
+iso19115 = "ckanext.iso19115.plugin:Iso19115Plugin"
+
+[tool.setuptools.packages]
+find = {}
+
 [tool.black]
 # line-length = 88
 # preview = true
