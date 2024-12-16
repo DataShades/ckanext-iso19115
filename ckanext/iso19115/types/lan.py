@@ -28,6 +28,4 @@ class MD_CharacterSetCode(Codelist):
 class PT_Locale:
     language: Codelist[lan.LanguageCode]
     country: Optional[Codelist[lan.CountryCode]] = None
-    characterEncoding: Optional[Codelist[lan.MD_CharacterSetCode]] = field(
-        default_factory=lambda: Codelist[lan.MD_CharacterSetCode]("UTF-8")
-    )
+    characterEncoding: Optional[Codelist[lan.MD_CharacterSetCode]] = "UTF-8"
