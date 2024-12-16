@@ -93,7 +93,7 @@ class CI_Series:
 
 @dataclass
 class AbstractCI_Party:
-    name: gco.CharacterString = None
+    name: Optional[gco.CharacterString] = None
     contactInfo: Optional[list[CI_Contact]] = field(default_factory=list)
     partyIdentifier: Optional[list[mcc.MD_Identifier]] = field(default_factory=list)
 

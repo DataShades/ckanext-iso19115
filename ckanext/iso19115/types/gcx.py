@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import Field, dataclass, field
-from typing import Optional
+from dataclasses import dataclass
+
 from .base import Atomic
 
 

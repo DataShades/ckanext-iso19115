@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.1.1](https://github.com/DataShades/ckanext-iso19115/compare/v0.1.0...v0.1.1) (2023-05-27)
+## [0.2.0](https://github.com/DataShades/ckanext-iso19115/compare/v0.1.1...v0.2.0) (2023-12-16)
+
+### ⚠ BREAKING CHANGES
+
+* CKAN v2.11 support
+
+
+## [0.1.1](https://github.com/DataShades/ckanext-iso19115/compare/v0.1.0...v0.1.1) (2023-05-27)
 
 
 ### Features

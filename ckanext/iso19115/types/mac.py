@@ -52,8 +52,8 @@ class MI_PriorityCode(Codelist):
 @dataclass
 class MI_Revision:
     description: Optional[gco.CharacterString] = None
-    author: cit.CI_Responsibility = None
-    dateInfo: cit.CI_Date = None
+    author: Optional[cit.CI_Responsibility] = None
+    dateInfo: Optional[cit.CI_Date] = None
 
 
 @dataclass
@@ -73,8 +73,8 @@ class MI_Objective:
 @dataclass
 class MI_Plan:
     type: Optional[Codelist[mac.MI_GeometryTypeCode]] = None
-    status: Codelist[mcc.MD_ProgressCode] = None
-    citation: cit.CI_Citation = None
+    status: Optional[Codelist[mcc.MD_ProgressCode]] = None
+    citation: Optional[cit.CI_Citation] = None
     operation: Optional[list[mac.MI_Operation]] = field(default_factory=list)
     satisfiedRequirement: Optional[list[mac.MI_Requirement]] = field(
         default_factory=list
@@ -103,8 +103,8 @@ class MI_Event:
 @dataclass
 class MI_Platform:
     citation: Optional[list[cit.CI_Citation]] = field(default_factory=list)
-    identifier: mcc.MD_Identifier = None
-    description: gco.CharacterString = None
+    identifier: Optional[mcc.MD_Identifier] = None
+    description: Optional[gco.CharacterString] = None
     sponsor: Optional[list[cit.CI_Responsibility]] = field(default_factory=list)
     instrument: list[mac.MI_Instrument] = field(default_factory=list)
     otherPropertyType: Optional[gco.RecordType] = None
@@ -117,8 +117,8 @@ class MI_Platform:
 @dataclass
 class MI_Sensor:
     citation: Optional[list[cit.CI_Citation]] = field(default_factory=list)
-    identifier: mcc.MD_Identifier = None
-    type: gco.CharacterString = None
+    identifier: Optional[mcc.MD_Identifier] = None
+    type: Optional[gco.CharacterString] = None
     description: Optional[gco.CharacterString] = None
     mountedOn: Optional[mac.MI_Platform] = None
     otherPropertyType: Optional[gco.RecordType] = None
@@ -134,7 +134,7 @@ class MI_Sensor:
 @dataclass
 class MI_InstrumentationEvent:
     citation: Optional[list[cit.CI_Citation]] = field(default_factory=list)
-    description: gco.CharacterString = None
+    description: Optional[gco.CharacterString] = None
     extent: Optional[list[gex.EX_Extent]] = field(default_factory=list)
     type: list[Codelist[mac.MI_InstrumentationEventTypeCode]] = field(
         default_factory=list
@@ -158,8 +158,8 @@ class MI_InstrumentationEventList:
 @dataclass
 class MI_Instrument:
     citation: Optional[list[cit.CI_Citation]] = field(default_factory=list)
-    identifier: mcc.MD_Identifier = None
-    type: gco.CharacterString = None
+    identifier: Optional[mcc.MD_Identifier] = None
+    type: Optional[gco.CharacterString] = None
     description: Optional[gco.CharacterString] = None
     mountedOn: Optional[mac.MI_Platform] = None
     otherPropertyType: Optional[gco.RecordType] = None
@@ -176,7 +176,7 @@ class MI_Operation:
     description: Optional[gco.CharacterString] = None
     citation: Optional[cit.CI_Citation] = None
     identifier: Optional[mcc.MD_Identifier] = None
-    status: Codelist[mcc.MD_ProgressCode] = None
+    status: Optional[Codelist[mcc.MD_ProgressCode]] = None
     type: Optional[Codelist[mac.MI_OperationTypeCode]] = None
     parentOperation: Optional[mac.MI_Operation] = None
     childOperation: Optional[list[mac.MI_Operation]] = field(default_factory=list)
@@ -205,12 +205,12 @@ class MI_AcquisitionInformation:
 @dataclass
 class MI_Requirement:
     citation: Optional[cit.CI_Citation] = None
-    identifier: mcc.MD_Identifier = None
+    identifier: Optional[mcc.MD_Identifier] = None
     requestor: list[cit.CI_Responsibility] = field(default_factory=list)
     recipient: list[cit.CI_Responsibility] = field(default_factory=list)
-    priority: Codelist[mac.MI_PriorityCode] = None
-    requestedDate: mac.MI_RequestedDate = None
-    expiryDate: gco.DateTime = None
+    priority: Optional[Codelist[mac.MI_PriorityCode]] = None
+    requestedDate: Optional[mac.MI_RequestedDate] = None
+    expiryDate: Optional[gco.DateTime] = None
     satisifiedPlan: Optional[list[mac.MI_Plan]] = field(default_factory=list)
 
 

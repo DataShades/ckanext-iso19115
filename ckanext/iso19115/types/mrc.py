@@ -49,7 +49,7 @@ class MD_FeatureCatalogueDescription(mcc.Abstract_ContentInformation):
 
 @dataclass
 class MD_CoverageDescription(mcc.Abstract_ContentInformation):
-    attributeDescription: gco.RecordType = None
+    attributeDescription: Optional[gco.RecordType] = None
     processingLevelCode: Optional[mcc.MD_Identifier] = None
     attributeGroup: Optional[list[mrc.MD_AttributeGroup]] = field(default_factory=list)
 

@@ -35,7 +35,7 @@ class AbstractEX_GeographicExtent:
 
 @dataclass
 class EX_GeographicDescription(AbstractEX_GeographicExtent):
-    geographicIdentifier: mcc.MD_Identifier = None
+    geographicIdentifier: Optional[mcc.MD_Identifier] = None
 
 
 @dataclass
@@ -45,7 +45,7 @@ class EX_BoundingPolygon(AbstractEX_GeographicExtent):
 
 @dataclass
 class EX_GeographicBoundingBox(AbstractEX_GeographicExtent):
-    westBoundLongitude: gco.Decimal = None
-    eastBoundLongitude: gco.Decimal = None
-    southBoundLatitude: gco.Decimal = None
-    northBoundLatitude: gco.Decimal = None
+    westBoundLongitude: Optional[gco.Decimal] = None
+    eastBoundLongitude: Optional[gco.Decimal] = None
+    southBoundLatitude: Optional[gco.Decimal] = None
+    northBoundLatitude: Optional[gco.Decimal] = None

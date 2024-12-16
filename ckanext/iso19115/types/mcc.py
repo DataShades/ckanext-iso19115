@@ -22,7 +22,7 @@ class MD_ProgressCode(Codelist):
 @dataclass
 class MD_Identifier:
     authority: Optional[cit.CI_Citation] = None
-    code: gco.CharacterString = None
+    code: Optional[gco.CharacterString] = None
     codeSpace: Optional[gco.CharacterString] = None
     version: Optional[gco.CharacterString] = None
     description: Optional[gco.CharacterString] = None

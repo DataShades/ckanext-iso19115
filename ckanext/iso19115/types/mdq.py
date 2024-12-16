@@ -166,23 +166,25 @@ class AbstractDQ_Result:
 
 @dataclass
 class QE_CoverageResult(AbstractDQ_Result):
-    spatialRepresentationType: Codelist[mcc.MD_SpatialRepresentationTypeCode] = None
-    resultFile: mdq.QualityResultFile = None
-    resultSpatialRepresentation: mcc.Abstract_SpatialRepresentation = None
-    resultContentDescription: mcc.Abstract_ContentInformation = None
-    resultFormat: mrd.MD_Format = None
+    spatialRepresentationType: Optional[
+        Codelist[mcc.MD_SpatialRepresentationTypeCode]
+    ] = None
+    resultFile: Optional[mdq.QualityResultFile] = None
+    resultSpatialRepresentation: Optional[mcc.Abstract_SpatialRepresentation] = None
+    resultContentDescription: Optional[mcc.Abstract_ContentInformation] = None
+    resultFormat: Optional[mrd.MD_Format] = None
 
 
 @dataclass
 class DQ_ConformanceResult(AbstractDQ_Result):
-    specification: cit.CI_Citation = None
+    specification: Optional[cit.CI_Citation] = None
     explanation: Optional[gco.CharacterString] = None
     # pass: gco.Boolean
 
 
 @dataclass
 class DQ_DescriptiveResult(AbstractDQ_Result):
-    statement: gco.CharacterString = None
+    statement: Optional[gco.CharacterString] = None
 
 
 @dataclass
