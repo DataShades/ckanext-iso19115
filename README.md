@@ -36,6 +36,14 @@ None at present
 ckanext.iso19115.misc.cache_dir = /var/data/iso19115_cache
 ```
 
+## CLI
+
+Clear compiled schema caches:
+
+```sh
+ckan -c /path/to/ckan.ini iso19115 cache clear
+```
+
 ## Usage
 
 Customize the way of mapping dataset into ISO 19115 by implementing `IIso18115` interface.

@@ -85,9 +85,15 @@ for f in _schematron_mapping.values():
     ), f"Schema {f} does not exists. Have you extracted namespaces.zip?"
 
 
-def _get_cache_path(name):
+def get_cache_dir(create: bool = True) -> Path:
     cache_dir = Path(tk.config.get(CONFIG_CACHE_DIR) or _tempdir)
-    cache_dir.mkdir(parents=True, exist_ok=True)
+    if create:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir
+
+
+def _get_cache_path(name):
+    cache_dir = get_cache_dir()
     return cache_dir / f"{name}.pickle"
 
 

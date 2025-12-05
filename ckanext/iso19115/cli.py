@@ -82,6 +82,52 @@ def build_example(
 
 
 @iso19115.group()
+def cache():
+    """Cache management."""
+    pass
+
+
+@cache.command("clear")
+def cache_clear():
+    """Remove compiled schema cache files."""
+    cache_dir = utils.get_cache_dir(create=False)
+    persistent_dir = tk.config.get(utils.CONFIG_CACHE_DIR)
+
+    if not persistent_dir:
+        click.echo(
+            f"Persistent cache directory is not configured "
+            f"({utils.CONFIG_CACHE_DIR}). Using temporary path: {cache_dir}"
+        )
+
+    if not cache_dir.exists():
+        click.echo(f"Cache directory {cache_dir} does not exist.")
+        return
+
+    if not cache_dir.is_dir():
+        raise click.ClickException(f"Cache path {cache_dir} is not a directory.")
+
+    removed = 0
+    errors = []
+    for cache_file in cache_dir.glob("*.pickle"):
+        try:
+            cache_file.unlink()
+            removed += 1
+        except OSError as exc:
+            errors.append((cache_file, exc))
+
+    for path, exc in errors:
+        tk.error_shout(f"Failed to remove {path}: {exc}")
+
+    if errors:
+        raise click.ClickException("Unable to clear cache completely.")
+
+    if removed:
+        click.secho(f"Removed {removed} cache file(s) from {cache_dir}", fg="green")
+    else:
+        click.echo(f"No cache files found in {cache_dir}")
+
+
+@iso19115.group()
 def validate():
     """Validate data agains ISO 19115 schema."""
     pass
